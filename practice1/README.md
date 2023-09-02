@@ -27,8 +27,8 @@
 
 ### Histograms
 
-<img src="./practice1/img/h.png" alt="h" width="552">
+<img src="./img/h.png" alt="h" width="552">
 
 ### Results
 
-<img src="./practice1/img/r.png" alt="h" width="1489">
+<img src="./img/r.png" alt="h" width="1489">
