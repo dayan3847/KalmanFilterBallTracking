@@ -42,4 +42,4 @@ Present the following topics:
 * Expected Value
 * Conditional Probability
 
-## PDF: [Practice 2](https://github.com/dayan3847/bayes_estimator/blob/main/practice2/out/practice2.pdf)
+## PDF: [Practice 2](https://raw.githubusercontent.com/dayan3847/bayes_estimator/main/practice2/out/practice2.pdf)
