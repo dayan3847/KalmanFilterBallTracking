@@ -32,3 +32,14 @@
 ### Results
 
 <img src="./practice1/img/r.png" alt="h" width="1489">
+
+# Practice 2:
+
+## Instructions:
+
+Present the following topics:
+
+* Expected Value
+* Conditional Probability
+
+## PDF: [Practice 2](https://github.com/dayan3847/bayes_estimator/blob/main/practice2/out/practice2.pdf)
