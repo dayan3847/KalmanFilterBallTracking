@@ -27,6 +27,12 @@ Empirical demonstration of the equivalence of the standard and recursive functio
 
 <img src="./practice1/img/r.png" alt="h" width="1489">
 
+# Practice 2: Analytical demonstration of recursive _μ_.
+
+Analytical demonstration of the equivalence of the standard and recursive functions of _μ_.
+
+## PDF: [Practice 2](https://raw.githubusercontent.com/dayan3847/bayes_estimator/main/practice2/practice2.pdf)
+
 # Practice 3: Expected Value and Conditional Probability
 
 ## Instructions:
