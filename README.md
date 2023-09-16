@@ -8,11 +8,11 @@
 
 **Student:** Ing. Dayan Bravo Fraga <[dayan3847@gmail.com](mailto:dayan3847@gmail.com)>
 
-# Practice 1:
+# Practice 1: Proof recursive _μ_ and _σ_.
 
-## GitHub: [Practice 1](https://github.com/dayan3847/bayes_estimator/tree/main/practice1)
+Empirical demonstration of the equivalence of the standard and recursive functions of _μ_ and _σ_.
 
-## Colab: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/dayan3847/bayes_estimator/blob/master/practice1/practice1.ipynb)
+## GitHub: [Practice 1](https://github.com/dayan3847/bayes_estimator/tree/main/practice1) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/dayan3847/bayes_estimator/blob/master/practice1/practice1.ipynb)
 
 ## Steps:
 
@@ -23,17 +23,11 @@
 * Graph the mean and variance of the samples generated in a non-recursive and recursive way.
 * Compare the results obtained.
 
-## Summary
-
-### Histograms
-
-<img src="./practice1/img/h.png" alt="h" width="552">
-
-### Results
+## Results
 
 <img src="./practice1/img/r.png" alt="h" width="1489">
 
-# Practice 2:
+# Practice 3: Expected Value and Conditional Probability
 
 ## Instructions:
 
@@ -42,4 +36,4 @@ Present the following topics:
 * Expected Value
 * Conditional Probability
 
-## PDF: [Practice 2](https://raw.githubusercontent.com/dayan3847/bayes_estimator/main/practice2/out/practice2.pdf)
+## PDF: [Practice 3](https://raw.githubusercontent.com/dayan3847/bayes_estimator/main/practice3/practice3.pdf)

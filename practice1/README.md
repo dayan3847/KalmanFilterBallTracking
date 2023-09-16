@@ -10,6 +10,8 @@
 
 # Practice 1:
 
+Empirical demonstration of the equivalence of the standard and recursive functions of _μ_ and _σ_.
+
 ## GitHub: [Practice 1](https://github.com/dayan3847/bayes_estimator/tree/main/practice1)
 
 ## Colab: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/dayan3847/bayes_estimator/blob/master/practice1/practice1.ipynb)
