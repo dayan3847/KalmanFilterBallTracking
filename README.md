@@ -27,11 +27,23 @@ Empirical demonstration of the equivalence of the standard and recursive functio
 
 <img src="./practice1/img/r.png" alt="h" width="1489">
 
-# Practice 2: Analytical demonstration of recursive _μ_.
+# Practice 2: Analytical demonstration of _μ_ iterative and recursive.
 
-Analytical demonstration of the equivalence of the standard and recursive functions of _μ_.
+Analytical demonstration of the equivalence of the iterative and recursive functions of _μ_.
 
-## PDF: [Practice 2](https://raw.githubusercontent.com/dayan3847/bayes_estimator/main/practice2/practice2.pdf)
+## PDF Doc: [Practice 2](https://raw.githubusercontent.com/dayan3847/bayes_estimator/main/practice2/practice2.pdf)
+
+## Preview:
+
+<img src="./practice2/src/img/preview20.png" alt="h" width="1279">
+
+## Conclusion:
+
+It has been demonstrated using the method of mathematical induction.
+We have shown that if the formulas are equivalent for _n = k_, then they are also equivalent for _n = k + 1_.
+Since we have already shown that they are equivalent for _n = 1_ (base step),
+we can conclude that the iterative and recursive formulas for calculating $\mu$ are equivalent for any value of $n$,
+therefore, they are equally valid.
 
 # Practice 3: Expected Value and Conditional Probability
 
@@ -42,4 +54,4 @@ Present the following topics:
 * Expected Value
 * Conditional Probability
 
-## PDF: [Practice 3](https://raw.githubusercontent.com/dayan3847/bayes_estimator/main/practice3/practice3.pdf)
+## PDF Presentation: [Practice 3](https://raw.githubusercontent.com/dayan3847/bayes_estimator/main/practice3/practice3.pdf)

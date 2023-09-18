@@ -6,7 +6,6 @@
 \usepackage{graphicx}
 %\usepackage[utf8]{inputenc}
 %\usepackage{geometry}
-%\usepackage{amsmath}
 %\usepackage{amsfonts}
 %\usepackage{amssymb}
 %\usepackage{caption}
@@ -14,22 +13,23 @@
 %%\usepackage{cite}
 %\usepackage{hyperref}
 \usepackage{authblk}
+\usepackage{amsmath}
+\usepackage{cancel}
+
 % Front
 
 % Title
 \title{
     \includegraphics[scale=.1]{./img/logo_uady}\\
     \normalfont \large \textsc{Bayes Estimation} \\ [0.3cm]
-    \HRule \\[0.3cm]
-    \Large \bfseries Practice 2 \\
-    \HRule \\[0.3cm]
+    \Large \bfseries{Practice 2} \\
+    \HRule \\[0.1cm]
+    \small \textit{Analytical demonstration of $\mu$ recursive and iterative formula.}
 }
 % Author
 \author{
-    \textsc{Ing.}~Dayan~\textsc{Bravo~Fraga}\textsuperscript{1}\\
-    \vspace{.1cm}\\
-    \emph{Teacher:}\\
-    \authorcr\textsc{Dr.}~Arturo~\textsc{Espinosa~Romero}\textsuperscript{2}\\
+    \textsc{Ing.}~Dayan~\textsc{Bravo~Fraga}~\textsuperscript{1}\\
+    \emph{Teacher:}~\textsc{Dr.}~Arturo~\textsc{Espinosa~Romero}~\textsuperscript{2}\\
 }
 % Date
 \date{September 2023}
@@ -41,5 +41,121 @@
         \textbf{Universidad Autónoma de Yucatán} \textit{Facultad de Matemáticas}\\
     \end{center}
 
+
+    \section{Demonstration}\label{sec:demonstration}
+    %es:
+    %Demostración analítica de quivalencia de las formulas de mu iterativa y recursiva.
+    %en:
+    Analytical demonstration of $\mu$ iterative and recursive formula equivalence.
+
+    \subsection{Definitions}\label{subsec:definitions}
+    %es:
+    %Supongamos que tienes una secuencia de números {x1, x2, x3, ..., xn} que quieres promediar, donde n es el número de elementos en la secuencia.
+    %Formula iterativa:
+    %en:
+    Suppose you have a sequence of numbers ${x_1, x_2, x_3, \ldots, x_n}$ that you want to average, where $n$ is the number of elements in the sequence.
+
+    \subsection{Iterative formula}\label{subsec:iterative-formula}
+    %es:
+    %La fórmula iterativa para calcular el promedio de una secuencia de números es:
+    %en:
+    The iterative formula for calculating the average of a sequence of numbers is:
+
+    \begin{equation}
+        \mu_{n} = \frac{1}{n} \sum_{i=1}^{n} x_i\label{eq:equation2}
+    \end{equation}
+    or
+    \begin{equation}
+        \mu_{n} = \frac{x_1 + x_2 + x_3 + \dots + x_n}{n}\label{eq:equation1}
+    \end{equation}
+
+    \subsection{Recursive formula}\label{subsec:recursive-formula}
+    %es:
+    %La fórmula recursiva para calcular el promedio de una secuencia de números es:
+    %en:
+    The recursive formula for calculating the average of a sequence of numbers is:
+    \begin{equation}
+        \mu_{n} =
+        \begin{cases}
+            x_n & \text{if } n = 1 \\
+            \frac{(n-1)\mu_{n-1} + x_n}{n} & \text{if } n > 1
+        \end{cases}
+        \label{eq:equation3}
+    \end{equation}
+
+    \subsection{Induction}\label{subsec:induction}
+    %es:
+    % Demostrar que estas dos fórmulas son equivalentes utilizando inducción matemática.
+    %en:
+    Prove that these two formulas are equivalent using mathematical induction.
+
+    \subsection{Base step $n = 1$}\label{subsec:base-step}
+    %es:
+    %Demostrar que la fórmula recursiva es válida para el caso base, es decir, cuando n = 1.
+    %en:
+    Prove that the recursive formula is valid for the base case, i.e.~when $n = 1$.
+
+    \begin{align}
+        \intertext{Iterative Formula and Recursive Formula when $n = 1$}
+        \frac{x_1}{n} &= x_n \\
+        \intertext{Substitute $n = 1$ in both formulas}
+        \frac{x_1}{1} &= x_1 \\
+        \intertext{Verify}
+        x_1 &= x_1
+    \end{align}
+
+    \subsection{Inductive step $n > 1$}\label{subsec:inductive-step}
+    %es:
+    %Demostrar que la fórmula recursiva es válida para el paso inductivo, es decir, cuando n > 1.
+    %en:
+    Prove that the recursive formula is valid for the inductive step, i.e.~when $n > 1$.
+
+    %es:
+    %Supongamos que las fórmulas iterativa y recursiva son equivalentes para n = k., es decir, que:
+    %en:
+    Suppose the iterative and recursive formulas are equivalent for $n = k$, i.e.~that:
+
+    \begin{align}
+        \mu_{k} &= \frac{1}{k} \sum_{i=1}^{k} x_i \\
+        \mu_{k} &= \frac{x_1 + x_2 + x_3 + \dots + x_k}{k} \\
+    \end{align}
+
+    %es:
+    %Demostrar que las fórmulas iterativa y recursiva son equivalentes para n = k + 1, es decir, que:
+    %en:
+    Prove that the iterative and recursive formulas are equivalent for $n = k + 1$, i.e.~that:
+
+    \begin{align}
+        \mu_{k+1} &= \frac{1}{k+1} \sum_{i=1}^{k+1} x_i \\
+        \mu_{k+1} &= \frac{x_1 + x_2 + x_3 + \dots + x_k + x_{k+1}}{k+1} \\
+    \end{align}
+
+    \begin{align}
+        \intertext{Iterative Formula and Recursive Formula when $n = k + 1$}
+        \frac{x_1 + x_2 + x_3 + \dots + x_k + x_{k+1}}{k+1} &= \frac{k \cdot \mu_{k} + x_{k+1}}{k+1} \\
+        %es:
+        %\intertext{Como suponemos que las fórmulas iterativa y recursiva son equivalentes para n = k, entonces podemos sustituir la fórmula iterativa de &\mu_{k} en la fórmula recursiva para obtener:}
+        %en:
+        \intertext{Since we assume that the iterative and recursive formulas are equivalent for $n = k$, then we can substitute the iterative formula of $\mu_{k}$ in the recursive formula to obtain:}
+        \frac{x_1 + x_2 + x_3 + \dots + x_k + x_{k+1}}{k+1} &= \frac{k \cdot \frac{x_1 + x_2 + x_3 + \dots + x_k}{k} + x_{k+1}}{k+1} \\
+        \intertext{Simplify}
+        \frac{x_1 + x_2 + x_3 + \dots + x_k + x_{k+1}}{k+1} &= \frac{\cancel{k} \cdot \frac{x_1 + x_2 + x_3 + \dots + x_k}{\cancel{k}} + x_{k+1}}{k+1} \\
+        \intertext{Verify}
+        \frac{x_1 + x_2 + x_3 + \dots + x_k + x_{k+1}}{k+1} &= \frac{x_1 + x_2 + x_3 + \dots + x_k + x_{k+1}}{k+1}
+    \end{align}
+
+    \subsection{Conclusion}\label{subsec:conclusion}
+    %es:
+    %Se ha demostrado utilizando el método de inducción matemática.
+    %Hemos demostrado que si las fórmulas son equivalentes para $n = k$, entonces también lo son para $n = k + 1$.
+    %Dado que ya hemos demostrado que son equivalentes para $n = 1$ (paso base),
+    %podemos concluir que las fórmulas iterativa y recursiva para calcular $\mu$ son equivalentes para cualquier valor de $n$,
+    %por lo tanto, son igualmente válidas.
+    %en:
+    It has been demonstrated using the method of mathematical induction.
+    We have shown that if the formulas are equivalent for $n = k$, then they are also equivalent for $n = k + 1$.
+    Since we have already shown that they are equivalent for $n = 1$ (base step),
+    we can conclude that the iterative and recursive formulas for calculating $\mu$ are equivalent for any value of $n$,
+    therefore, they are equally valid.
 
 \end{document}
