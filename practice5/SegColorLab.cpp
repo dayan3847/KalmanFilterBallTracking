@@ -1,6 +1,7 @@
 #include "opencv2/opencv.hpp"
 #include <iostream>
 #include "lib/arturo/lib_arturo.h"
+#include "lib/arturo/Circle.h"
 #include "lib/tools.h"
 
 
@@ -38,15 +39,14 @@ int main(int argc, char** argv)
 	bool first = true;
 	do
 	{
-		//Capturamos una imagen, y validamos que haya funcionado la operacion.
+		// We capture an image, and validate that the operation worked.
 		inputVideoCapture >> inputFrame;
 		if (inputFrame.empty())
 			break;
 
 		arturo::convertLab(inputFrame, inputFrameLab);
 
-		//En la primera iteración inicializamos las imagenes que usaremos para
-		//almacenar resultados.
+		// In the first iteration we initialize the images that we will use to store results.
 		if (first)
 		{
 			arturo::convertLab(colorFrame, inputFrameLab);
@@ -75,43 +75,42 @@ int main(int argc, char** argv)
 		}
 
 		// Fit Circles
-//		std::vector<arturo::Circle> circles;
-//		arturo::ransacFit(drawing, circles, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1);
-//
-//		// Draw Circles
-//		for (int i = 0; i < circles.size(); i++)
-//		{
-//			cv::Point center(cvRound(circles[i].x), cvRound(circles[i].y));
-//			int radius = cvRound(circles[i].r);
-//			cv::circle(inputFrame, center, radius, cv::Scalar(0, 0, 255), 3, 8, 0);
-//		}
+		std::vector<arturo::Circle> circles;
+		for (auto& contour : contours)
+		{
+			std::vector<arturo::Point3s> pts;
+			for (auto& contourPoint : contour)
+			{
+				arturo::Point3s p;
+				p.x = contourPoint.x;
+				p.y = contourPoint.y;
+				p.z = 0;
+				pts.push_back(p);
+			}
+			arturo::Circle c(pts);
+			circles.push_back(c);
+		}
 
-		// Aqui tienen que hacer lo necesario para que a la imagen segmentada
-		// que está almacenada en Mask se extraga el contorno y se ajuste un
-		// circulo a esta. Para esto, usar la función findContours.
-		//
-		// Algo asó como lo que sigue:
-		//
-		// findContours(output, Contornos, RETR_EXTERNAL, CHAIN_APPROX_NONE);
-		//
-		// Donde Contorns es como sigue:
-		//
-		// vector< vector<Point> >Contornos;
-		//
-		// Cada elemento de Contornos es una vector de coordenadas y cada uno
-		// de estos vectores corresponde a un objeto segmentado en la imagen.
-		// Estos vectores hay que ajustarlos a un circulo usando la clase
-		// Circle y ransacFit.
+		// Draw Circles ( in red )
+		for (auto& c : circles)
+		{
+			cv::Point center(cvRound(c.h), cvRound(c.k));
+			int radius = cvRound(c.r);
+			if (0 >= radius || 1000 < radius)
+				continue;
+			cv::circle(inputFrame, center, radius, cv::Scalar(0, 0, 255), 3, 8, 0);
+		}
 
+		// Show images
 		imshow(inputWinName, inputFrame);
 		imshow(maskWinName, mask);
 
-		//Si el usuario oprime una tecla, termina el ciclo.
+		// If the user presses a key, the cycle ends.
 	} while (cv::waitKeyEx(30) < 0);
 
 	imwrite("./media/LastFrame.png", inputFrame);
 
-	//Cierra ventanas que fueron abiertas.
+	// Close windows that were opened.
 	cv::destroyWindow(inputWinName);
 	cv::destroyWindow(maskWinName);
 
