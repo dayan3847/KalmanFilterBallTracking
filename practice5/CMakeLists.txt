@@ -6,10 +6,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(OpenCV_FOUND 1)
 find_package(OpenCV REQUIRED)
 
-add_executable(practice5 main.cpp
+set(
+        SOURCE_FILES
         tools.h
-        lib_arturo.h)
-target_link_libraries(practice5 ${OpenCV_LIBS})
+        lib_arturo.h
+)
 
-add_executable(SegColorLab SegColorLab.cpp)
+add_executable(SegColorLab SegColorLab.cpp ${SOURCE_FILES})
 target_link_libraries(SegColorLab ${OpenCV_LIBS})

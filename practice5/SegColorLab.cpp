@@ -1,8 +1,5 @@
 #include "opencv2/opencv.hpp"
-#include "opencv2/highgui/highgui.hpp"
 #include <iostream>
-//#include <vector>
-//#include <cstdio>
 #include "lib_arturo.h"
 #include "tools.h"
 
@@ -93,8 +90,8 @@ int main(int argc, char** argv)
 	imwrite("./media/LastFrame.png", inputFrame);
 
 	//Cierra ventanas que fueron abiertas.
-	cv::destroyWindow(maskWinName);
 	cv::destroyWindow(inputWinName);
+	cv::destroyWindow(maskWinName);
 
 	std::cout << "\033[1;32m" << "End" << "\033[0m" << std::endl;
 	return 0;
