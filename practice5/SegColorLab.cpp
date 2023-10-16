@@ -7,14 +7,26 @@
 
 int main(int argc, char** argv)
 {
+
+	std::string filename;
+	std::string colorModel;
+	if (argc < 2)
+	{
+		filename = "./media/PelotaVerde.mkv";
+		colorModel = "./media/ColorVerde.png";
+	}
+	else
+	{
+		filename = argv[1];
+		colorModel = argv[2];
+	}
+
 	// Input
 	cv::VideoCapture inputVideoCapture;
 	cv::Mat inputFrame, inputFrameLab;
 
-	std::string filename = "./media/PelotaVerde.mkv";
 	my_tools::getVideoCapture(filename, inputVideoCapture);
 
-	std::string colorModel = "./media/ColorVerde.png";
 	cv::Mat colorFrame = cv::imread(colorModel);
 
 	std::string inputWinName = "Input";
