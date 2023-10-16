@@ -1,7 +1,7 @@
 #include "opencv2/opencv.hpp"
 #include <iostream>
-#include "lib_arturo.h"
-#include "tools.h"
+#include "lib/lib_arturo.h"
+#include "lib/tools.h"
 
 
 int main(int argc, char** argv)
@@ -60,10 +60,31 @@ int main(int argc, char** argv)
 			first = false;
 		}
 
-		imshow(inputWinName, inputFrame);
-
 		arturo::Umbraliza(inputFrameLab, mask, mean, iCov, umDist.val, umLuz.val);
 
+		// Find Contours
+		std::vector<std::vector<cv::Point> > contours;
+		std::vector<cv::Vec4i> hierarchy;
+		cv::findContours(mask, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
+
+		// Draw Contours
+		for (int i = 0; i < contours.size(); i++)
+		{
+			cv::Scalar color = cv::Scalar(255, 255, 255);
+			cv::drawContours(inputFrame, contours, i, color, 2, 8, hierarchy, 0, cv::Point());
+		}
+
+		// Fit Circles
+//		std::vector<arturo::Circle> circles;
+//		arturo::ransacFit(drawing, circles, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1);
+//
+//		// Draw Circles
+//		for (int i = 0; i < circles.size(); i++)
+//		{
+//			cv::Point center(cvRound(circles[i].x), cvRound(circles[i].y));
+//			int radius = cvRound(circles[i].r);
+//			cv::circle(inputFrame, center, radius, cv::Scalar(0, 0, 255), 3, 8, 0);
+//		}
 
 		// Aqui tienen que hacer lo necesario para que a la imagen segmentada
 		// que está almacenada en Mask se extraga el contorno y se ajuste un
@@ -82,6 +103,7 @@ int main(int argc, char** argv)
 		// Estos vectores hay que ajustarlos a un circulo usando la clase
 		// Circle y ransacFit.
 
+		imshow(inputWinName, inputFrame);
 		imshow(maskWinName, mask);
 
 		//Si el usuario oprime una tecla, termina el ciclo.

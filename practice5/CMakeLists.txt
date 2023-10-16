@@ -8,8 +8,8 @@ find_package(OpenCV REQUIRED)
 
 set(
         SOURCE_FILES
-        tools.h
-        lib_arturo.h
+        lib/tools.h
+        lib/lib_arturo.h
 )
 
 add_executable(SegColorLab SegColorLab.cpp ${SOURCE_FILES})
