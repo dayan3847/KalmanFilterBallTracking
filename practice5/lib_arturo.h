@@ -5,48 +5,77 @@
 #ifndef LIB_ARTURO_H
 #define LIB_ARTURO_H
 
+#include "opencv2/opencv.hpp"
+#include "opencv2/highgui/highgui.hpp"
 #include <iostream>
+#include <vector>
+#include <cstdio>
+//#include <Circle.h>
 
-#define SLIDE_MAX 1000 //!< El valor maximo de pasos del control de barra deslizante del GUI.
+#define SLIDE_MAX 1000                    //!< El valor maximo de pasos del control de barra deslizante del GUI.
+
+#define IM_WIDTH 640                        //!< El ancho de la imagen.
+#define IM_HEIGHT 480                        //!< Lo alto de la imagen.
+
+
+#define  a_COMPONENT  30.677        //!< El valor del componente a del modelo de color.
+#define  b_COMPONENT 58.212            //!< El valor del componente b del modelo de color.
 #define I_FACT (1. / 255.) //!< Factor de escalamiento de la imagen de entrada.
 
 namespace arturo
 {
-	/*!
-	\struct barData
-	\brief Esta estructura almacena el valor inicial y el factor de incremento de
-	una barra deslizante (un elemento del GUI usada en el programa).
-	*/
-	struct barData
+
+/*!
+\fn void printMat(cv::Mat &M, const char *name = NULL, bool transp=false)
+\brief Esta funcion imprime en stdout como texto el contenido de una matriz
+       almacenado en un objeto CV::Mat.
+
+\param M La matriz a ser impresa
+\param name El nombre de la variable o identificador asociado a la matriz.
+\param transp Indica si se imprime la matriz de manera convencional o
+       transpuesta.
+
+ Esta funcion imprime en stdout como texto el contenido de una matriz almacenado en un objeto CV::Mat.
+ El formato de impresión sigue la sintaxis aceptada por Matlab/octave y tiene
+ una opcion para imprimir en forma transpuesta (añadiendo un apostrofe al final
+ de la definicion), lo cual es útil cuando se imprimen vectores columna en forma
+ de renglones.
+
+*/
+	template<typename X>
+	void printMat(cv::Mat& M, const char* name = NULL, bool transp = false)
 	{
-		float fact; //!< Esta variable almacena el factor de incremento utilizado por la barra deslizante.
+		int i, j;
 
-		float val;    //!< Este valor almacena el valor inicial de la barra deslizante.
+		if (name)
+			std::cout << name << " = [";
+		else
+			std::cout << name << "[";
 
-		/*!
-		   \fn barData(float f, float v)
-		   \brief Constructor de la clase; inicializa los attributos fact y val.
-		   \param f El valor con el que inicializamos el atributo fact.
-		   \param v El valor con el que inicializamos el atributo val.
-		*/
-		barData(float f, float v)
+		if (transp)
 		{
-			fact = f;
-			val = v;
+			for (i = 0; i < M.cols; ++i)
+			{
+				for (j = 0; j < M.rows - 1; ++j)
+					std::cout << M.at<X>(i, j) << ", ";
+				std::cout << M.at<X>(i, j) << std::endl;
+			}
+			std::cout << "]'" << std::endl;
 		}
-	};
-
-	void convertLab(cv::Mat const& f, cv::Mat& labFrame)
-	{
-		cv::Mat fFrame;
-		f.convertTo(fFrame, CV_32FC3);
-		//Es necesario normalizar la image BGR al intervalo [0,1] antes de convertir a espacio CIE Lab; en este caso iFact = 1./255
-		fFrame *= I_FACT;
-		cvtColor(fFrame, labFrame, cv::COLOR_BGR2Lab);
+		else
+		{
+			for (i = 0; i < M.rows; ++i)
+			{
+				for (j = 0; j < M.cols - 1; ++j)
+					std::cout << M.at<X>(i, j) << ", ";
+				std::cout << M.at<X>(i, j) << std::endl;
+			}
+			std::cout << "]" << std::endl;
+		}
 	}
 
 /*!
-\fn int MeaniCov(Mat &image, Mat &Mask, Mat &mean, Mat &cov)
+\fn int MeaniCov(cv::Mat &image, cv::Mat &Mask, cv::Mat &mean, cv::Mat &cov)
 
 \brief Esta funcion calcula la media y la inversa de la matriz de covarianza de
 cada uno de los elementos de una matriz que representa una imagen a color.
@@ -140,32 +169,99 @@ regresando el valor -1.
 		return cont;
 	}
 
-	/*!
-	\fn void Umbraliza(Mat &Im, Mat &Mask, Mat &M, Mat &iCov, float umD, float umL)
-	\brief Esta funcion umbraliza la imagen a color en base a la distancia de Mahalanobis a un modelo de color.
-	\param Im Un objeto del tipo CV::Mat que reoresenta una imagen a color con tres
-			  canales.
-	\param Mask Una referencia a un objeto del tipo CV::Mat en donde se regresa la
-				máscara que indica que elementos de Im están arriba del umbral.
-	\param M Un objeto del tipo CV::Mat que contiene el vector promedio del modelo
-		   de color con el cual se compara.
-	\param iCov Un objeto del tipo CV::Mat que contiene el inverso de la matriz de
-				convarianza de modelo de color con el cual se compara.
-	\param umD El valor del umbral de distancia entre cada elemento procesado y el
-			   modelo de color.
-	\param umL El valor del umbral de intensidad luminosa.
+/*!
+\struct barData
+\brief Esta estructura almacena el valor inicial y el factor de incremento de
+una barra deslizante (un elemento del GUI usada en el programa).
+*/
+	struct barData
+	{
+		float fact; //!< Esta variable almacena el factor de incremento utilizado por la barra deslizante.
 
-	Esta funcion umbraliza la imagen a color en base a la distancia de Mahalanobis
-	a un modelo de color. El modelo de color esta determinado por el vector M, y la
-	matriz iCov, que almacenan el color promedio y la inversa de la matrix de
-	covarianza del modelo de color. El proceso de umbralización ocurre en dos
-	niveles: primero se descarta aquellos elementos cuya intensidad luminosa es
-	inferior al vlor umL, esto con el fin de eliminar pixeles obscuros, y segundo se
-	eliminan aquellos pixeles cuya distancia de Mahalanobis al modelo de color es
-	mayor el umD.
+		float val;    //!< Este valor almacena el valor inicial de la barra deslizante.
 
-	La imagen umbralizada se regresa en la matriz Mask.
-	*/
+		/*!
+		   \fn barData(float f, float v)
+		   \brief Constructor de la clase; inicializa los attributos fact y val.
+		   \param f El valor con el que inicializamos el atributo fact.
+		   \param v El valor con el que inicializamos el atributo val.
+		*/
+		barData(float f, float v)
+		{
+			fact = f;
+			val = v;
+		}
+	};
+
+/*!
+\fn void umLuzChange (int pos, void *data)
+\brief Esta función es invocada por el GUI cada vez que el usuario interactua
+con la barra deslizante asociada a un umbral de intensidad de luz.
+\param pos Aquí se pasa la nueva posición de la barra
+\param data Un apuntador a los datos asociados a la barra.
+
+Esta función es invocada por el GUI cada vez que el usuario interactua con la
+barra deslizante asociada a un umbral de intensidad de luz.
+Cuando el usuario modifica la posición de la barra, se invoca esta fución, al
+ser invocada se le pasa como parámetro la nueva posicion (con el parámetro pos),
+y aun apuntador generico a datos que el usuario puede utilizar para modificar el
+funcionamiento del programa (en nuestro caso una estructura del tipo barData).
+*/
+	void umLuzChange(int pos, void* data)
+	{
+		barData* umbral = (barData*)data;
+
+		umbral->val = pos * umbral->fact;
+	}
+
+/*!
+\fn void umDistChange (int pos, void *data)
+\brief Esta función es invocada por el GUI cada vez que el usuario interactua
+con la barra deslizante asociada a un umbral de distancia.
+\param pos Aquí se pasa la nueva posición de la barra
+\param data Un apuntador a los datos asociados a la barra.
+
+Esta función es invocada por el GUI cada vez que el usuario interactua con la
+barra deslizante asociada a un umbral de distancia
+Cuando el usuario modifica la posición de la barra, se invoca esta fución, al
+ser invocada se le pasa como parámetro la nueva posicion (con el parámetro pos),
+y aun apuntador generico a datos que el usuario puede utilizar para modificar el
+funcionamiento del programa (en nuestro caso una estructura del tipo barData).
+*/
+	void umDistChange(int pos, void* data)
+	{
+		barData* umbral = (barData*)data;
+
+		umbral->val = pow(pos * umbral->fact, 2);
+		std::cout << "Umbral Dist :" << umbral->val << std::endl;
+	}
+
+/*!
+\fn void Umbraliza(cv::Mat &Im, cv::Mat &Mask, cv::Mat &M, cv::Mat &iCov, float umD, float umL)
+\brief Esta funcion umbraliza la imagen a color en base a la distancia de Mahalanobis a un modelo de color.
+\param Im Un objeto del tipo CV::Mat que reoresenta una imagen a color con tres
+          canales.
+\param Mask Una referencia a un objeto del tipo CV::Mat en donde se regresa la
+            máscara que indica que elementos de Im están arriba del umbral.
+\param M Un objeto del tipo CV::Mat que contiene el vector promedio del modelo
+       de color con el cual se compara.
+\param iCov Un objeto del tipo CV::Mat que contiene el inverso de la matriz de
+            convarianza de modelo de color con el cual se compara.
+\param umD El valor del umbral de distancia entre cada elemento procesado y el
+           modelo de color.
+\param umL El valor del umbral de intensidad luminosa.
+
+Esta funcion umbraliza la imagen a color en base a la distancia de Mahalanobis
+a un modelo de color. El modelo de color esta determinado por el vector M, y la
+matriz iCov, que almacenan el color promedio y la inversa de la matrix de
+covarianza del modelo de color. El proceso de umbralización ocurre en dos
+niveles: primero se descarta aquellos elementos cuya intensidad luminosa es
+inferior al vlor umL, esto con el fin de eliminar pixeles obscuros, y segundo se
+eliminan aquellos pixeles cuya distancia de Mahalanobis al modelo de color es
+mayor el umD.
+
+La imagen umbralizada se regresa en la matriz Mask.
+*/
 	void Umbraliza(cv::Mat& Im, cv::Mat& Mask, cv::Mat& M, cv::Mat& iCov, float umD,
 		float umL)
 	{
@@ -209,82 +305,19 @@ regresando el valor -1.
 		}
 #ifdef __VERBOSE__
 		if (cont)
-		   cout << "Mean Mahalanobis Distance: " << meanMaha << "/" << cont <<
-				" : " << meanMaha / cont << endl;
+			std::cout << "Mean Mahalanobis Distance: " << meanMaha << "/" << cont <<
+				 " : " << meanMaha / cont << std::endl;
 #endif
 	}
 
-	/*!
-	\fn void umDistChange (int pos, void *data)
-	\brief Esta función es invocada por el GUI cada vez que el usuario interactua
-	con la barra deslizante asociada a un umbral de distancia.
-	\param pos Aquí se pasa la nueva posición de la barra
-	\param data Un apuntador a los datos asociados a la barra.
-
-	Esta función es invocada por el GUI cada vez que el usuario interactua con la
-	barra deslizante asociada a un umbral de distancia
-	Cuando el usuario modifica la posición de la barra, se invoca esta fución, al
-	ser invocada se le pasa como parámetro la nueva posicion (con el parámetro pos),
-	y aun apuntador generico a datos que el usuario puede utilizar para modificar el
-	funcionamiento del programa (en nuestro caso una estructura del tipo barData).
-	*/
-	void umDistChange(int pos, void* data)
+	void convertLab(cv::Mat const& frame, cv::Mat& labFrame)
 	{
-		auto* umbral = (barData*)data;
-
-		umbral->val = pow((float)pos * umbral->fact, 2);
-		std::cout << "Umbral Dist :" << umbral->val << std::endl;
+		cv::Mat tempFrame;
+		frame.convertTo(tempFrame, CV_32FC3);
+		//Es necesario normalizar la image BGR al intervalo [0,1] antes de convertir a espacio CIE Lab; en este caso iFact = 1./255
+		tempFrame *= I_FACT;
+		cvtColor(tempFrame, labFrame, cv::COLOR_BGR2Lab);
 	}
-
-	/** getUmDist */
-	arturo::barData getUmDist(
-		std::string const& trackBarName,
-		std::string const& winName,
-		int* value
-	)
-	{
-		barData umDist(40. / SLIDE_MAX, 10);
-		cv::createTrackbar(trackBarName, winName,
-			value, SLIDE_MAX, umDistChange, (void*)&umDist);
-		umDistChange(SLIDE_MAX, (void*)&umDist);
-		return umDist;
-	}
-
-	/*!
-	\fn void umLuzChange (int pos, void *data)
-	\brief Esta función es invocada por el GUI cada vez que el usuario interactua
-	con la barra deslizante asociada a un umbral de intensidad de luz.
-	\param pos Aquí se pasa la nueva posición de la barra
-	\param data Un apuntador a los datos asociados a la barra.
-
-	Esta función es invocada por el GUI cada vez que el usuario interactua con la
-	barra deslizante asociada a un umbral de intensidad de luz.
-	Cuando el usuario modifica la posición de la barra, se invoca esta fución, al
-	ser invocada se le pasa como parámetro la nueva posicion (con el parámetro pos),
-	y aun apuntador generico a datos que el usuario puede utilizar para modificar el
-	funcionamiento del programa (en nuestro caso una estructura del tipo barData).
-	*/
-	void umLuzChange(int pos, void* data)
-	{
-		barData* umbral = (barData*)data;
-
-		umbral->val = pos * umbral->fact;
-	}
-
-	/** getUmLuz */
-	arturo::barData getUmLuz(
-		std::string const& trackBarName,
-		std::string const& winName,
-		int* value
-	)
-	{
-		barData umLuz(100. / SLIDE_MAX, 0);
-		cv::createTrackbar(trackBarName, winName,
-			value, SLIDE_MAX, umLuzChange,
-			(void*)&umLuz);
-		umLuzChange(0, (void*)&umLuz);
-	}
-
 }
 
 #endif //LIB_ARTURO_H

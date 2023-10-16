@@ -21,6 +21,7 @@ namespace my_tools
 			exit(1);
 		}
 
+		//Definimos el tamaño de las imagenes a ser capturadas.
 		videoCapture.set(cv::CAP_PROP_FRAME_WIDTH, IM_WIDTH);
 		videoCapture.set(cv::CAP_PROP_FRAME_HEIGHT, IM_HEIGHT);
 	}
