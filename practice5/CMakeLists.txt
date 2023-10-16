@@ -9,9 +9,9 @@ find_package(OpenCV REQUIRED)
 set(
         SOURCE_FILES
         lib/tools.h
-        lib/lib_arturo.h
-        lib/Circle.cpp
-        lib/Circle.h
+        lib/arturo/lib_arturo.h
+        lib/arturo/Circle.cpp
+        lib/arturo/Circle.h
 )
 
 add_executable(SegColorLab SegColorLab.cpp ${SOURCE_FILES})

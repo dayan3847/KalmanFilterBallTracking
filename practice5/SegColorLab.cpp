@@ -1,6 +1,6 @@
 #include "opencv2/opencv.hpp"
 #include <iostream>
-#include "lib/lib_arturo.h"
+#include "lib/arturo/lib_arturo.h"
 #include "lib/tools.h"
 
 
