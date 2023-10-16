@@ -70,8 +70,9 @@ int main(int argc, char** argv)
 		// Draw Contours
 		for (int i = 0; i < contours.size(); i++)
 		{
-			cv::Scalar color = cv::Scalar(255, 255, 255);
-			cv::drawContours(inputFrame, contours, i, color, 2, 8, hierarchy, 0, cv::Point());
+			cv::drawContours(inputFrame, contours, i,
+				cv::Scalar(255, 255, 255), 2, 8,
+				hierarchy, 0, cv::Point());
 		}
 
 		// Fit Circles
@@ -98,7 +99,8 @@ int main(int argc, char** argv)
 			int radius = cvRound(c.r);
 			if (0 >= radius || 1000 < radius)
 				continue;
-			cv::circle(inputFrame, center, radius, cv::Scalar(0, 0, 255), 3, 8, 0);
+			cv::circle(inputFrame, center, radius, cv::Scalar(0, 0, 255),
+				3, 8, 0);
 		}
 
 		// Show images
