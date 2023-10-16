@@ -2,8 +2,8 @@
 // Created by dayan3847 on 15/10/23.
 //
 
-#ifndef LIB_ARTURO_H
-#define LIB_ARTURO_H
+#ifndef FUNCTIONS_H
+#define FUNCTIONS_H
 
 #include "opencv2/opencv.hpp"
 #include "opencv2/highgui/highgui.hpp"
@@ -320,4 +320,4 @@ La imagen umbralizada se regresa en la matriz Mask.
 	}
 }
 
-#endif //LIB_ARTURO_H
+#endif //FUNCTIONS_H

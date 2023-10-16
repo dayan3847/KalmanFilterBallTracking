@@ -12,18 +12,37 @@
 
 namespace my_tools
 {
+	bool isInteger(const std::string& s)
+	{
+		try
+		{
+			std::stoi(s);
+			return true;
+		}
+		catch (const std::invalid_argument& ia)
+		{
+			return false;
+		}
+	}
+
 	void getVideoCapture(const std::string& filename, cv::VideoCapture& videoCapture)
 	{
-		videoCapture = cv::VideoCapture(filename);
+		videoCapture = my_tools::isInteger(filename)
+					   ? cv::VideoCapture(std::stoi(filename))
+					   : cv::VideoCapture(filename);
 		if (!videoCapture.isOpened())
 		{
 			std::cerr << "Error opening video file" << std::endl;
 			exit(1);
 		}
 
-		//Definimos el tamaño de las imagenes a ser capturadas.
+		double oW = videoCapture.get(cv::CAP_PROP_FRAME_WIDTH);
+		double oH = videoCapture.get(cv::CAP_PROP_FRAME_HEIGHT);
+		// We define the size of the images to be captured.
 		videoCapture.set(cv::CAP_PROP_FRAME_WIDTH, IM_WIDTH);
 		videoCapture.set(cv::CAP_PROP_FRAME_HEIGHT, IM_HEIGHT);
+		std::cout << "Changed frame size from ("
+				  << oW << " x " << oH << ") to (" << IM_WIDTH << " x " << IM_HEIGHT << ")" << std::endl;
 	}
 }
 

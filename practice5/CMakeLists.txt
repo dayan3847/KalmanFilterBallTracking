@@ -9,7 +9,7 @@ find_package(OpenCV REQUIRED)
 set(
         SOURCE_FILES
         lib/tools.h
-        lib/arturo/lib_arturo.h
+        lib/arturo/functions.h
         lib/arturo/Circle.cpp
         lib/arturo/Circle.h
 )

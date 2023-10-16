@@ -1,6 +1,6 @@
 #include "opencv2/opencv.hpp"
 #include <iostream>
-#include "lib/arturo/lib_arturo.h"
+#include "lib/arturo/functions.h"
 #include "lib/arturo/Circle.h"
 #include "lib/tools.h"
 
