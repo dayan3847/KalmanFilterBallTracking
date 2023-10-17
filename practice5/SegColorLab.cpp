@@ -7,7 +7,6 @@
 
 int main(int argc, char** argv)
 {
-
 	std::string filename;
 	std::string colorModel;
 	if (argc < 2)
@@ -100,7 +99,18 @@ int main(int argc, char** argv)
 				p.z = 0;
 				pts.push_back(p);
 			}
+			// Ransac Fit
 			arturo::Circle c(pts);
+			unsigned int nInl;
+			float w = .6;
+			float sigma = 1;
+			float p = .99;
+			float e = c.ransacFit(pts, nInl, w, sigma, p);
+			std::cout << "e: " << e << " r: " << c.r << std::endl;
+			if (0 > e or 5 < e)
+				continue;
+			if (20 > c.r)
+				continue;
 			circles.push_back(c);
 		}
 
