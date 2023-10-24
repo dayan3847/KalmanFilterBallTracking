@@ -10,8 +10,8 @@ set(
         SOURCE_FILES
         lib/tools.h
         lib/arturo/functions.h
-        lib/arturo/Circle.cpp
-        lib/arturo/Circle.h
+        lib/arturo/Circle/Circle.cpp
+        lib/arturo/Circle/Circle.h
 )
 
 add_executable(SegColorLab SegColorLab.cpp ${SOURCE_FILES})
