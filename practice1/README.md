@@ -8,7 +8,7 @@
 
 **Student:** Ing. Dayan Bravo Fraga <[dayan3847@gmail.com](mailto:dayan3847@gmail.com)>
 
-# Practice 1:
+# Practice 1:  Proof recursive _μ_ and _σ_.
 
 Empirical demonstration of the equivalence of the standard and recursive functions of _μ_ and _σ_.
 
