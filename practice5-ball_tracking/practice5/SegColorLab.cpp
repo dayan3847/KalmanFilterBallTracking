@@ -9,24 +9,18 @@
 
 int main(int argc, char** argv)
 {
-	std::string filename;
-	std::string colorModel;
-	if (argc < 2)
-	{
-		filename = "./media/PelotaVerde.mkv";
-		colorModel = "./colors/ColorVerde.png";
-	}
-	else
-	{
-		filename = argv[1];
-		colorModel = argv[2];
-	}
+	std::string filename = argc < 2 ? "./media/ball_green_video.mkv" : argv[1];
+	std::string colorModel = argc < 3 ? "./media/ball_green_model.png" : argv[2];
+	std::string timesFilename = argc < 4 ? "./media/ball_green_times.txt" : argv[3];
+
+	// Read delta times
+	std::vector<int> deltaTimes;
+	dayan::readDeltaTimes(timesFilename, deltaTimes);
 
 	// Input
 	cv::VideoCapture inputVideoCapture;
-	cv::Mat inputFrame, inputFrameLab;
 
-	my_tools::getVideoCapture(filename, inputVideoCapture);
+	dayan::getVideoCapture(filename, inputVideoCapture);
 
 	cv::Mat colorFrame = cv::imread(colorModel);
 
@@ -56,9 +50,9 @@ int main(int argc, char** argv)
 	int contourPointMinCount = 50;
 	cv::createTrackbar("Contour Point Count Min", inputWinName, &contourPointMinCount, 100);
 
-	cv::Mat mask, mean, iCov;
-	bool first = true;
-	int frameCount = 0;
+	cv::Mat inputFrame, inputFrameLab, mask, mean, iCov;
+	int dt = 0;
+	int frameCount = -1;
 	do
 	{
 		std::cout << "\033[1;32m" << "Frame: " << frameCount++ << "\033[0m" << std::endl;
@@ -67,10 +61,12 @@ int main(int argc, char** argv)
 		if (inputFrame.empty())
 			break;
 
-		arturo::convertLab(inputFrame, inputFrameLab);
+		dt += deltaTimes[frameCount];
+
+		std::cout << "dt: " << dt << std::endl;
 
 		// In the first iteration we initialize the images that we will use to store results.
-		if (first)
+		if (0 == frameCount)
 		{
 			arturo::convertLab(colorFrame, inputFrameLab);
 
@@ -79,68 +75,34 @@ int main(int argc, char** argv)
 
 			cv::Size sz(inputFrame.cols, inputFrame.rows);
 			mask = cv::Mat::ones(sz, CV_8U);
-
-			first = false;
 		}
-
-		arturo::Umbraliza(inputFrameLab, mask, mean, iCov, umDist.val, umLuz.val);
-
-		// Find Contours
-		std::vector<std::vector<cv::Point> > contours;
-		std::vector<cv::Vec4i> hierarchy;
-		cv::findContours(mask, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
-
-		// Draw Contours
-		for (int i = 0; i < contours.size(); i++)
+		else
 		{
-			cv::drawContours(inputFrame, contours, i,
-				cv::Scalar(255, 255, 255), 2, 8,
-				hierarchy, 0, cv::Point());
+			arturo::convertLab(inputFrame, inputFrameLab);
 		}
 
-		// Fit Circles
-		std::vector<Circle> circles;
-		for (auto& contour : contours)
+		Circle* c = nullptr;
+		dayan::makeMeasurement(
+			inputFrameLab,
+			mask,
+			mean,
+			iCov,
+			umDist.val,
+			umLuz.val,
+			contourPointMinCount,
+			error,
+			c
+		);
+		if (nullptr == c)
 		{
-			if (contourPointMinCount > contour.size())
-				continue;
-			std::cout << "cantidad de puntos del contorno: " << contour.size() << std::endl;
-			std::vector</*arturo::*/Point3s> pts;
-			for (auto& contourPoint : contour)
-			{
-				/*arturo::*/Point3s p;
-				p.x = contourPoint.x;
-				p.y = contourPoint.y;
-				p.z = 0;
-				pts.push_back(p);
-			}
-			// Ransac Fit
-			/*arturo::*/Circle c(pts);
-			unsigned int nInl;
-			float w = .6;
-			float sigma = 1;
-			float p = .99;
-			float e = c.ransacFit(pts, nInl, w, sigma, p);
-			if (0 > e)
-				continue;
-			if ((float)error < e)
-				continue;
-			std::cout << "e: " << e << " r: " << c.r << std::endl;
-//			if (20 > c.r)
-//				continue;
-			circles.push_back(c);
+			std::cout << "No se encontro el circulo" << std::endl;
+			continue;
 		}
 
-		// Draw Circles ( in red )
-		for (auto& c : circles)
-		{
-			cv::Point center(cvRound(c.h), cvRound(c.k));
-			int radius = cvRound(c.r);
-			if (0 >= radius)
-				continue;
-			cv::circle(inputFrame, center, radius, cv::Scalar(0, 0, 255),
-				3, 8, 0);
-		}
+		cv::Point center(cvRound(c->h), cvRound(c->k));
+		int radius = cvRound(c->r);
+		cv::circle(inputFrame, center, radius, cv::Scalar(0, 0, 255),
+			3, 8, 0);
 
 		// Show images
 		imshow(inputWinName, inputFrame);
@@ -151,6 +113,7 @@ int main(int argc, char** argv)
 		if (0 < sleep)
 			std::this_thread::sleep_for(std::chrono::seconds(1));
 
+		dt = 0;
 		// If the user presses a key, the cycle ends.
 	} while (cv::waitKeyEx(30) < 0);
 
