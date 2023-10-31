@@ -144,6 +144,89 @@ namespace dayan
 //				3, 8, 0);
 		}
 	}
+
+	void makeMeasurement(
+		cv::Mat& inputFrameLab,
+		cv::Mat& mask,
+		cv::Mat& mean,
+		cv::Mat& iCov,
+		float const& umDistVal,
+		float const& umLuzVal,
+		int const& contourPointMinCount,
+		int const& error,
+		Circle*& circle,
+		cv::Mat& Z
+	)
+	{
+		makeMeasurement(
+			inputFrameLab,
+			mask,
+			mean,
+			iCov,
+			umDistVal,
+			umLuzVal,
+			contourPointMinCount,
+			error,
+			circle
+		);
+		if (nullptr == circle)
+			return;
+
+		// Matriz de calibracion
+//		cv::Mat k = (cv::Mat_<float>(3, 3)
+//			<<
+//			1377.8036814997304, 0, 400.02681782947193,
+//			0, 1377.8036814997304, 300.096061319675721,
+//			0, 0, 1
+//		);
+		// Matriz de calibracion (inversa)
+		cv::Mat kInv = (cv::Mat_<float>(3, 3)
+			<<
+			0.000725792805918116, 0, -0.290336586554948,
+			0, 0.000725792805918116, -0.217807562390183,
+			0, 0, 1
+		);
+		// Centro en pixeles
+		cv::Mat centerPx = (cv::Mat_<float>(3, 1)
+			<<
+			circle->h,
+			circle->k,
+			1
+		);
+		// Centro en metros
+		cv::Mat centerMe = kInv * centerPx;
+		centerMe = centerMe / centerMe.at<float>(2);
+		// Radio en pixeles
+		float radiusPx = circle->r;
+		// Radio en metros
+		float radiusMe = radiusPx * kInv.at<float>(0, 0);
+		// TODO pruebas de diferentes formas de calcular el radio
+//		// Radio en metros (test2)
+//		cv::Mat p1Px = (cv::Mat_<float>(3, 1)
+//			<<
+//			circle->h + circle->r,
+//			circle->k,
+//			1
+//		);
+//		cv::Mat p1Me = kInv * p1Px;
+//		float radiusMeTest2 = p1Me.at<float>(0) - centerMe.at<float>(0);
+//		// Radio en metros (test3)
+//		cv::Mat p2Px = (cv::Mat_<float>(3, 1)
+//			<<
+//			circle->h,
+//			circle->k + circle->r,
+//			1
+//		);
+//		cv::Mat p2Me = kInv * p2Px;
+//		float radiusMeTest3 = p2Me.at<float>(1) - centerMe.at<float>(1);
+
+			Z = (cv::Mat_<float>(3, 1)
+			<<
+			centerMe.at<float>(0),
+			centerMe.at<float>(1),
+			radiusMe
+		);
+	}
 }
 
 #endif //TOOLS_H

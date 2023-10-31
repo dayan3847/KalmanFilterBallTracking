@@ -52,6 +52,14 @@ int main(int argc, char** argv)
 
 	cv::Mat inputFrame, inputFrameLab, mask, mean, iCov;
 	int dt = 0;
+
+	// KalmanFilter
+	cv::KalmanFilter kalmanFilter(6, 5, 0);
+	setIdentity(kalmanFilter.processNoiseCov, Scalar::all(1e-4));
+	setIdentity(kalmanFilter.measurementNoiseCov, Scalar::all(10));
+	setIdentity(kalmanFilter.errorCovPost, Scalar::all(.1));
+
+	Mat prediction;
 	int frameCount = -1;
 	do
 	{
@@ -65,6 +73,23 @@ int main(int argc, char** argv)
 
 		std::cout << "dt: " << dt << std::endl;
 
+		// Matrix A
+		kalmanFilter.transitionMatrix =
+			(Mat_<float>(6, 6)
+				<<
+				1, 0, 0, dt, 0, 0,
+				0, 1, 0, 0, dt, 0,
+				0, 0, 1, 0, 0, dt,
+				0, 0, 0, 1, 0, 0,
+				0, 0, 0, 0, 1, 0,
+				0, 0, 0, 0, 0, 1
+			);
+
+		// Matrix H
+//		kalmanFilter.measurementMatrix =
+
+
+
 		// In the first iteration we initialize the images that we will use to store results.
 		if (0 == frameCount)
 		{
@@ -75,13 +100,25 @@ int main(int argc, char** argv)
 
 			cv::Size sz(inputFrame.cols, inputFrame.rows);
 			mask = cv::Mat::ones(sz, CV_8U);
+
+			kalmanFilter.statePre = (Mat_<float>(6, 1)
+				<<
+				1,
+				1,
+				1,
+				0,
+				0,
+				0
+			);
 		}
 		else
 		{
 			arturo::convertLab(inputFrame, inputFrameLab);
 		}
+		prediction = kalmanFilter.predict();
 
 		Circle* c = nullptr;
+		cv::Mat Z;
 		dayan::makeMeasurement(
 			inputFrameLab,
 			mask,
@@ -91,13 +128,15 @@ int main(int argc, char** argv)
 			umLuz.val,
 			contourPointMinCount,
 			error,
-			c
+			c,
+			Z
 		);
 		if (nullptr == c)
 		{
 			std::cout << "No se encontro el circulo" << std::endl;
 			continue;
 		}
+		kalmanFilter.correct(Z);
 
 		cv::Point center(cvRound(c->h), cvRound(c->k));
 		int radius = cvRound(c->r);
