@@ -57,8 +57,11 @@ int main(int argc, char** argv)
 
 	// KalmanFilter
 	cv::KalmanFilter kalmanFilter(6, 5, 0);
+	// R
 	setIdentity(kalmanFilter.processNoiseCov, Scalar::all(1e-4));
-	setIdentity(kalmanFilter.measurementNoiseCov, Scalar::all(10));
+	// Q
+	setIdentity(kalmanFilter.measurementNoiseCov, Scalar::all(1));
+	// P
 	setIdentity(kalmanFilter.errorCovPost, Scalar::all(.1));
 
 	int frameCount = -1;
@@ -146,7 +149,7 @@ int main(int argc, char** argv)
 			cv::Mat h;
 			dayan::getH(kalmanFilter.statePre, h, kalmanFilter.measurementMatrix);
 
-			//cv::Mat corrected = kalmanFilter.correct(Z);
+//			cv::Mat corrected = kalmanFilter.correct(Z);
 			Mat HxQxHt = kalmanFilter.measurementMatrix * kalmanFilter.errorCovPre * kalmanFilter.measurementMatrix.t()
 				+ kalmanFilter.measurementNoiseCov;
 			Mat HxQxHt_inv;
@@ -158,18 +161,20 @@ int main(int argc, char** argv)
 					* kalmanFilter.errorCovPre;
 
 			dayan::printMat(kalmanFilter.statePost, "corrected");
-			// corrected color green
+//			 corrected color green
 			dayan::drawCircleByX(inputFrame, kalmanFilter.statePost, cv::Scalar(0, 255, 0));
+//			dayan::drawCircleByX(inputFrame, corrected, cv::Scalar(0, 255, 0));
 		}
-		//cv::Mat predicted = kalmanFilter.predict();
-		kalmanFilter.statePre = kalmanFilter.transitionMatrix * kalmanFilter.statePost;
-		kalmanFilter.errorCovPre =
-			kalmanFilter.transitionMatrix * kalmanFilter.errorCovPost * kalmanFilter.transitionMatrix.t()
-				+ kalmanFilter.processNoiseCov;
-
-		dayan::printMat(kalmanFilter.statePre, "predicted");
+		cv::Mat predicted = kalmanFilter.predict();
+//		kalmanFilter.statePre = kalmanFilter.transitionMatrix * kalmanFilter.statePost;
+//		kalmanFilter.errorCovPre =
+//			kalmanFilter.transitionMatrix * kalmanFilter.errorCovPost * kalmanFilter.transitionMatrix.t()
+//				+ kalmanFilter.processNoiseCov;
+//
+//		dayan::printMat(kalmanFilter.statePre, "predicted");
 		// predicted color red
-		dayan::drawCircleByX(inputFrame, kalmanFilter.statePre, cv::Scalar(0, 0, 255));
+//		dayan::drawCircleByX(inputFrame, kalmanFilter.statePre, cv::Scalar(0, 0, 255));
+		dayan::drawCircleByX(inputFrame, predicted, cv::Scalar(0, 0, 255));
 
 		// Show images
 		imshow(inputWinName, inputFrame);
