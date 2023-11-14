@@ -8,10 +8,11 @@ find_package(OpenCV REQUIRED)
 
 set(
         SOURCE_FILES
-        lib/tools.h
         lib/arturo/functions.h
         lib/arturo/Circle/Circle.cpp
         lib/arturo/Circle/Circle.h
+        lib/dayan/KalmanFilterExtended.h
+        lib/dayan/tools.h
 )
 
 add_executable(SegColorLab SegColorLab.cpp ${SOURCE_FILES})

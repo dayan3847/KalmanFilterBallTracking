@@ -4,7 +4,8 @@
 #include "opencv2/opencv.hpp"
 #include "lib/arturo/functions.h"
 #include "lib/arturo/Circle/Circle.h"
-#include "lib/tools.h"
+#include "lib/dayan/KalmanFilterExtended.h"
+#include "lib/dayan/tools.h"
 
 
 int main(int argc, char** argv)
@@ -29,7 +30,7 @@ int main(int argc, char** argv)
 	cv::namedWindow(inputWinName, 1);
 	cv::namedWindow(maskWinName, 1);
 
-	int sleep = 1;
+	int sleep = 0;
 	cv::createTrackbar("Sleep", inputWinName, &sleep, 1);
 	// Slide 1 (distancia)
 	int dSlidePos = 200;
@@ -55,11 +56,50 @@ int main(int argc, char** argv)
 	// Crear un vector vacio de Z (mediciones)
 	std::vector<cv::Mat> list_Z;
 
+//	// KalmanFilter
+//	cv::KalmanFilter kalmanFilter0(6, 5, 0);
+//	setIdentity(kalmanFilter0.processNoiseCov, Scalar::all(1e-4));
+//	setIdentity(kalmanFilter0.measurementNoiseCov, Scalar::all(10));
+//	setIdentity(kalmanFilter0.errorCovPost, Scalar::all(.1));
+//
+//	dayan::printMat(kalmanFilter0.processNoiseCov, "processNoiseCov");
+//	dayan::printMat(kalmanFilter0.measurementNoiseCov, "measurementNoiseCov");
+//	dayan::printMat(kalmanFilter0.errorCovPost, "errorCovPost");
+
 	// KalmanFilter
-	cv::KalmanFilter kalmanFilter(6, 5, 0);
-	setIdentity(kalmanFilter.processNoiseCov, Scalar::all(1e-4));
-	setIdentity(kalmanFilter.measurementNoiseCov, Scalar::all(10));
-	setIdentity(kalmanFilter.errorCovPost, Scalar::all(.1));
+	dayan::KalmanFilterExtended kalmanFilter;
+//	setIdentity(kalmanFilter.Q, Scalar::all(1e-4));
+	kalmanFilter.Q = (Mat_<float>(6, 6)
+		<<
+		1e-4, 0, 0, 0, 0, 0,
+		0, 1e-4, 0, 0, 0, 0,
+		0, 0, 1e-4, 0, 0, 0,
+		0, 0, 0, 1e-4, 0, 0,
+		0, 0, 0, 0, 1e-4, 0,
+		0, 0, 0, 0, 0, 1e-4
+	);
+//	setIdentity(kalmanFilter.R, Scalar::all(10));
+	kalmanFilter.R = (Mat_<float>(5, 5)
+		<<
+		10, 0, 0, 0, 0,
+		0, 10, 0, 0, 0,
+		0, 0, 10, 0, 0,
+		0, 0, 0, 10, 0,
+		0, 0, 0, 0, 10
+	);
+//	setIdentity(kalmanFilter.P, Scalar::all(.1));
+	kalmanFilter.P = (Mat_<float>(6, 6)
+		<<
+		.1, 0, 0, 0, 0, 0,
+		0, .1, 0, 0, 0, 0,
+		0, 0, .1, 0, 0, 0,
+		0, 0, 0, .1, 0, 0,
+		0, 0, 0, 0, .1, 0,
+		0, 0, 0, 0, 0, .1
+	);
+	dayan::printMat(kalmanFilter.Q, "Q");
+	dayan::printMat(kalmanFilter.R, "R");
+	dayan::printMat(kalmanFilter.P, "P");
 
 	int frameCount = -1;
 	do
@@ -75,16 +115,15 @@ int main(int argc, char** argv)
 		std::cout << "dt: " << dt << std::endl;
 
 		// Matrix A
-		kalmanFilter.transitionMatrix =
-			(Mat_<float>(6, 6)
-				<<
-				1, 0, 0, dt, 0, 0,
-				0, 1, 0, 0, dt, 0,
-				0, 0, 1, 0, 0, dt,
-				0, 0, 0, 1, 0, 0,
-				0, 0, 0, 0, 1, 0,
-				0, 0, 0, 0, 0, 1
-			);
+		kalmanFilter.A = (Mat_<float>(6, 6)
+			<<
+			1, 0, 0, dt, 0, 0,
+			0, 1, 0, 0, dt, 0,
+			0, 0, 1, 0, 0, dt,
+			0, 0, 0, 1, 0, 0,
+			0, 0, 0, 0, 1, 0,
+			0, 0, 0, 0, 0, 1
+		);
 
 //		// Matrix H
 //		kalmanFilter.measurementMatrix =
@@ -106,7 +145,7 @@ int main(int argc, char** argv)
 		{
 			arturo::convertLab(inputFrame, inputFrameLab);
 		}
-		Mat prediction = kalmanFilter.predict();
+//		kalmanFilter.predict();
 
 		Circle* c = nullptr;
 		cv::Mat Z;
@@ -137,39 +176,21 @@ int main(int argc, char** argv)
 
 		if (0 == frameCount)
 		{
-			dayan::getX(Z, kalmanFilter.statePre);
-			kalmanFilter.statePost = kalmanFilter.statePre;
-			dayan::printMat(kalmanFilter.statePre, "X");
+			dayan::getX(Z, kalmanFilter.X);
+//			kalmanFilter.statePost = kalmanFilter.statePre;
+//			dayan::printMat(kalmanFilter.statePre, "X");
 		}
 		else
 		{
-			cv::Mat h;
-			dayan::getH(kalmanFilter.statePre, h, kalmanFilter.measurementMatrix);
-
-			//cv::Mat corrected = kalmanFilter.correct(Z);
-			Mat HxQxHt = kalmanFilter.measurementMatrix * kalmanFilter.errorCovPre * kalmanFilter.measurementMatrix.t()
-				+ kalmanFilter.measurementNoiseCov;
-			Mat HxQxHt_inv;
-			cv::invert(HxQxHt, HxQxHt_inv, cv::DECOMP_LU);
-			kalmanFilter.gain = kalmanFilter.errorCovPre * kalmanFilter.measurementMatrix.t() * HxQxHt_inv;
-			kalmanFilter.statePost = kalmanFilter.statePre + kalmanFilter.gain * (Z - h);
-			kalmanFilter.errorCovPost =
-				(cv::Mat::eye(6, 6, CV_32F) - kalmanFilter.gain * kalmanFilter.measurementMatrix)
-					* kalmanFilter.errorCovPre;
-
-			dayan::printMat(kalmanFilter.statePost, "corrected");
+			kalmanFilter.predict_correct(Z);
+			dayan::printMat(kalmanFilter.Xp, "predicted");
+			dayan::printMat(kalmanFilter.X, "corrected");
+			// predicted color red
+			dayan::drawCircleByX(inputFrame, kalmanFilter.Xp, cv::Scalar(0, 0, 255));
 			// corrected color green
-			dayan::drawCircleByX(inputFrame, kalmanFilter.statePost, cv::Scalar(0, 255, 0));
+			dayan::drawCircleByX(inputFrame, kalmanFilter.X, cv::Scalar(0, 255, 0));
 		}
-		//cv::Mat predicted = kalmanFilter.predict();
-		kalmanFilter.statePre = kalmanFilter.transitionMatrix * kalmanFilter.statePost;
-		kalmanFilter.errorCovPre =
-			kalmanFilter.transitionMatrix * kalmanFilter.errorCovPost * kalmanFilter.transitionMatrix.t()
-				+ kalmanFilter.processNoiseCov;
 
-		dayan::printMat(kalmanFilter.statePre, "predicted");
-		// predicted color red
-		dayan::drawCircleByX(inputFrame, kalmanFilter.statePre, cv::Scalar(0, 0, 255));
 
 		// Show images
 		imshow(inputWinName, inputFrame);
