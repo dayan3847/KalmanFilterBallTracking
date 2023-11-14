@@ -4,13 +4,16 @@
 #include "opencv2/opencv.hpp"
 #include "lib/arturo/functions.h"
 #include "lib/arturo/Circle/Circle.h"
-#include "lib/dayan/KalmanFilterExtended.h"
 #include "lib/dayan/tools.h"
+//#include "lib/dayan/Config.h"
+#include "lib/dayan/KalmanFilterExtended.h"
 
 
 int main(int argc, char** argv)
 {
 	std::string data_path = argc < 2 ? "ball_orange" : argv[1];
+//	dayan::Config::loadData(data_path);
+
 	std::string file_color = "./media/" + data_path + "/color.png";
 	std::string file_diameter_cm = "./media/" + data_path + "/diameter_cm.txt";
 	std::string file_times = "./media/" + data_path + "/times.txt";
@@ -30,10 +33,12 @@ int main(int argc, char** argv)
 	cv::VideoCapture inputVideoCapture;
 	dayan::getVideoCapture(file_video, inputVideoCapture);
 	// K (camera matrix)
-	//	cv::Mat k;
-	//	dayan::readMatFromFile(k, file_k);
-	//	cv::Mat kInv;
-	//	cv::invert(k, kInv);
+	cv::Mat k;
+	dayan::readMatFromFile(k, file_k);
+	cv::Mat kInv;
+	cv::invert(k, kInv);
+
+	dayan::printMat(k, "k");
 
 	// Radio cm
 	float radio_cm = diameter_cm / 2;

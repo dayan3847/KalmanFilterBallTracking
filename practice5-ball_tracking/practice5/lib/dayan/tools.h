@@ -368,7 +368,7 @@ namespace dayan
 		{
 			for (int j = 0; j < mat.cols; j++)
 			{
-				stream << mat.at<double>(i, j);
+				stream << mat.at<float>(i, j);
 				matString += stream.str();
 				if (j < mat.cols - 1)
 					matString += s;
