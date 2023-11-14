@@ -170,7 +170,7 @@ int main(int argc, char** argv)
 			std::cout << "\033[1;31m" << "No se encontro el circulo" << "\033[0m" << std::endl;
 			continue;
 		}
-		dayan::printMat(Z, "Z");
+		//dayan::printMat(Z, "Z");
 		//dayan::drawCircle(inputFrame, c);
 		dayan::drawCircleByZ(inputFrame, Z, cv::Scalar(255, 0, 0));
 
@@ -183,10 +183,10 @@ int main(int argc, char** argv)
 		else
 		{
 			kalmanFilter.predict_correct(Z);
-			dayan::printMat(kalmanFilter.Xp, "predicted");
-			dayan::printMat(kalmanFilter.X, "corrected");
+//			dayan::printMat(kalmanFilter.X, "corrected");
+//			dayan::printMat(kalmanFilter.Xp, "predicted");
 			// predicted color red
-			dayan::drawCircleByX(inputFrame, kalmanFilter.Xp, cv::Scalar(0, 0, 255));
+			//dayan::drawCircleByX(inputFrame, kalmanFilter.Xp, cv::Scalar(0, 0, 255));
 			// corrected color green
 			dayan::drawCircleByX(inputFrame, kalmanFilter.X, cv::Scalar(0, 255, 0));
 		}

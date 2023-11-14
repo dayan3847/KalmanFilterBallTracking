@@ -11,8 +11,9 @@ set(
         lib/arturo/functions.h
         lib/arturo/Circle/Circle.cpp
         lib/arturo/Circle/Circle.h
-        lib/dayan/KalmanFilterExtended.h
         lib/dayan/tools.h
+        lib/dayan/KalmanFilter.h
+        lib/dayan/KalmanFilterExtended.h
 )
 
 add_executable(SegColorLab SegColorLab.cpp ${SOURCE_FILES})
