@@ -14,6 +14,7 @@ set(
         lib/dayan/tools.h
         lib/dayan/KalmanFilter.h
         lib/dayan/KalmanFilterExtended.h
+        lib/dayan/KalmanFilterExtendedImplicit.h
 )
 
 add_executable(SegColorLab SegColorLab.cpp ${SOURCE_FILES})

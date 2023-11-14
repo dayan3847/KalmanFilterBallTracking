@@ -12,10 +12,10 @@
 namespace dayan
 {
 
+	// Extended Kalman Filter
 	class KalmanFilterExtended : public dayan::KalmanFilter
 	{
 	public:
-
 		void correct(const cv::Mat& Z) override
 		{
 			cv::Mat h;

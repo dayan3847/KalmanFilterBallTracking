@@ -14,7 +14,6 @@
 
 namespace dayan
 {
-
 	// Matriz de calibracion
 	cv::Mat k = (cv::Mat_<float>(3, 3)
 		<<
@@ -31,7 +30,8 @@ namespace dayan
 		0, 0, 1
 	);
 
-	float realR = .03;
+	// TODO: Obtener estos valores de un archivo de configuracion
+	float realR = 0.0199; //!< Radio real del circulo naranja (en metros)
 
 	bool isInteger(const std::string& s)
 	{
@@ -384,6 +384,34 @@ namespace dayan
 		std::cout << name << std::endl;
 		std::string matString = matToString(mat, true);
 		std::cout << matString << std::endl;
+	}
+
+	void saveMatToFile(const cv::Mat& matrix, const std::string& filename)
+	{
+		cv::FileStorage fs(filename, cv::FileStorage::WRITE);
+
+		if (!fs.isOpened())
+		{
+			std::cerr << "No se pudo abrir el archivo para escribir." << std::endl;
+			return;
+		}
+
+		fs << "matrix" << matrix;
+		fs.release();
+	}
+
+	void readMatFromFile(cv::Mat& matrix, const std::string& filename)
+	{
+		cv::FileStorage fs(filename, cv::FileStorage::READ);
+
+		if (!fs.isOpened())
+		{
+			std::cerr << "No se pudo abrir el archivo para leer." << std::endl;
+			return;
+		}
+
+		fs["matrix"] >> matrix;
+		fs.release();
 	}
 }
 

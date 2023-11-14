@@ -10,20 +10,35 @@
 
 int main(int argc, char** argv)
 {
-	std::string filename = argc < 2 ? "./media/ball_green_video.mkv" : argv[1];
-	std::string colorModel = argc < 3 ? "./media/ball_green_model.png" : argv[2];
-	std::string timesFilename = argc < 4 ? "./media/ball_green_times.txt" : argv[3];
+	std::string data_path = argc < 2 ? "ball_orange" : argv[1];
+	std::string file_color = "./media/" + data_path + "/color.png";
+	std::string file_diameter_cm = "./media/" + data_path + "/diameter_cm.txt";
+	std::string file_times = "./media/" + data_path + "/times.txt";
+	std::string file_video = "./media/" + data_path + "/video.mkv";
+	std::string file_k = "./media/" + data_path + "/k.yaml";
 
+	// Read color frame
+	cv::Mat colorFrame = cv::imread(file_color);
+	// Read diameter
+	float diameter_cm;
+	std::ifstream file_diameter_cm_stream(file_diameter_cm);
+	file_diameter_cm_stream >> diameter_cm;
 	// Read delta times
 	std::vector<int> deltaTimes;
-	dayan::readDeltaTimes(timesFilename, deltaTimes);
-
+	dayan::readDeltaTimes(file_times, deltaTimes);
 	// Input
 	cv::VideoCapture inputVideoCapture;
+	dayan::getVideoCapture(file_video, inputVideoCapture);
+	// K (camera matrix)
+	//	cv::Mat k;
+	//	dayan::readMatFromFile(k, file_k);
+	//	cv::Mat kInv;
+	//	cv::invert(k, kInv);
 
-	dayan::getVideoCapture(filename, inputVideoCapture);
-
-	cv::Mat colorFrame = cv::imread(colorModel);
+	// Radio cm
+	float radio_cm = diameter_cm / 2;
+	// Radio Real (en metros)
+	float radioReal = radio_cm / 100;
 
 	std::string inputWinName = "Input";
 	std::string maskWinName = "Mask";
@@ -124,11 +139,6 @@ int main(int argc, char** argv)
 			0, 0, 0, 0, 1, 0,
 			0, 0, 0, 0, 0, 1
 		);
-
-//		// Matrix H
-//		kalmanFilter.measurementMatrix =
-
-
 
 		// In the first iteration we initialize the images that we will use to store results.
 		if (0 == frameCount)
