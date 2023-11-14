@@ -170,7 +170,7 @@ int main(int argc, char** argv)
 //		break;
 	} while (cv::waitKeyEx(30) < 0);
 
-	imwrite("./media/LastFrame.png", inputFrame);
+	imwrite("./media/" + data_path + "/LastFrame.png", inputFrame);
 
 	// Close windows that were opened.
 	cv::destroyWindow(maskWinName);
