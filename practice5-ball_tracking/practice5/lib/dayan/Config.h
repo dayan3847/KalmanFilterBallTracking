@@ -20,12 +20,9 @@ namespace dayan
 			std::string file_color = "./media/" + data_path + "/color.png";
 			this->color = cv::imread(file_color);
 			// Radio
-			std::string file_diameter_cm = "./media/" + data_path + "/diameter_cm.txt";
-			float diameter_cm;
-			std::ifstream file_diameter_cm_stream(file_diameter_cm);
-			file_diameter_cm_stream >> diameter_cm;
-			float radio_cm = diameter_cm / 2;
-			this->radio = radio_cm / 100;
+			std::string file_radio = "./media/" + data_path + "/radio.txt";
+			std::ifstream file_radio_stream(file_radio);
+			file_radio_stream >> this->radio;
 			// Delta Times
 			std::string file_times = "./media/" + data_path + "/times.txt";
 			dayan::readDeltaTimes(file_times, this->dTimes);

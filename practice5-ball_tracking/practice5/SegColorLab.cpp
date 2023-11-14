@@ -4,7 +4,7 @@
 #include "opencv2/opencv.hpp"
 #include "lib/arturo/functions.h"
 #include "lib/arturo/Circle/Circle.h"
-#include "lib/dayan/tools.h"
+//#include "lib/dayan/tools.h"
 #include "lib/dayan/Config.h"
 #include "lib/dayan/functions.h"
 #include "lib/dayan/KalmanFilterExtended.h"
@@ -12,13 +12,13 @@
 
 int main(int argc, char** argv)
 {
-	std::string data_path = argc < 2 ? "ball_orange" : argv[1];
+	std::string data_path = argc < 2 ? "ball_tennis" : argv[1];
 	auto config = dayan::Config::getInstance(data_path);
 
-	std::string inputWinName = "Input";
 	std::string maskWinName = "Mask";
-	cv::namedWindow(inputWinName, 1);
+	std::string inputWinName = "Input";
 	cv::namedWindow(maskWinName, 1);
+	cv::namedWindow(inputWinName, 1);
 
 	int sleep = 0;
 	cv::createTrackbar("Sleep", inputWinName, &sleep, 1);
@@ -42,21 +42,9 @@ int main(int argc, char** argv)
 	cv::createTrackbar("Contour Point Count Min", inputWinName, &contourPointMinCount, 100);
 
 	cv::Mat inputFrame, inputFrameLab, mask, mean, iCov;
-	int dt = 0;
-
-//	// KalmanFilter
-//	cv::KalmanFilter kalmanFilter0(6, 5, 0);
-//	setIdentity(kalmanFilter0.processNoiseCov, Scalar::all(1e-4));
-//	setIdentity(kalmanFilter0.measurementNoiseCov, Scalar::all(10));
-//	setIdentity(kalmanFilter0.errorCovPost, Scalar::all(.1));
-//
-//	dayan::printMat(kalmanFilter0.processNoiseCov, "processNoiseCov");
-//	dayan::printMat(kalmanFilter0.measurementNoiseCov, "measurementNoiseCov");
-//	dayan::printMat(kalmanFilter0.errorCovPost, "errorCovPost");
 
 	// KalmanFilter
 	dayan::KalmanFilterExtended kalmanFilter;
-//	setIdentity(kalmanFilter.Q, Scalar::all(1e-4));
 	kalmanFilter.Q = (Mat_<float>(6, 6)
 		<<
 		1e-4, 0, 0, 0, 0, 0,
@@ -66,7 +54,7 @@ int main(int argc, char** argv)
 		0, 0, 0, 0, 1e-4, 0,
 		0, 0, 0, 0, 0, 1e-4
 	);
-//	setIdentity(kalmanFilter.R, Scalar::all(10));
+//	dayan::printMat(kalmanFilter.Q, "Q");
 	kalmanFilter.R = (Mat_<float>(5, 5)
 		<<
 		10, 0, 0, 0, 0,
@@ -75,7 +63,7 @@ int main(int argc, char** argv)
 		0, 0, 0, 10, 0,
 		0, 0, 0, 0, 10
 	);
-//	setIdentity(kalmanFilter.P, Scalar::all(.1));
+//	dayan::printMat(kalmanFilter.R, "R");
 	kalmanFilter.P = (Mat_<float>(6, 6)
 		<<
 		.1, 0, 0, 0, 0, 0,
@@ -85,10 +73,9 @@ int main(int argc, char** argv)
 		0, 0, 0, 0, .1, 0,
 		0, 0, 0, 0, 0, .1
 	);
-	dayan::printMat(kalmanFilter.Q, "Q");
-	dayan::printMat(kalmanFilter.R, "R");
-	dayan::printMat(kalmanFilter.P, "P");
+//	dayan::printMat(kalmanFilter.P, "P");
 
+	int dt = 0;
 	int frameCount = -1;
 	do
 	{
@@ -128,8 +115,6 @@ int main(int argc, char** argv)
 		{
 			arturo::convertLab(inputFrame, inputFrameLab);
 		}
-//		kalmanFilter.predict();
-
 		Circle* c = nullptr;
 		cv::Mat Z;
 //		std::cout << "\033[1;32m" << "umDistVal: " << umDist.val << "\033[0m" << std::endl;
@@ -159,8 +144,6 @@ int main(int argc, char** argv)
 		if (0 == frameCount)
 		{
 			dayan::getX(Z, kalmanFilter.X);
-//			kalmanFilter.statePost = kalmanFilter.statePre;
-//			dayan::printMat(kalmanFilter.statePre, "X");
 		}
 		else
 		{
@@ -173,10 +156,9 @@ int main(int argc, char** argv)
 			dayan::drawCircleByX(inputFrame, kalmanFilter.X, cv::Scalar(0, 255, 0));
 		}
 
-
 		// Show images
-		imshow(inputWinName, inputFrame);
 		imshow(maskWinName, mask);
+		imshow(inputWinName, inputFrame);
 
 		std::cout << "error permitido: " << error << std::endl;
 
@@ -191,8 +173,8 @@ int main(int argc, char** argv)
 	imwrite("./media/LastFrame.png", inputFrame);
 
 	// Close windows that were opened.
-	cv::destroyWindow(inputWinName);
 	cv::destroyWindow(maskWinName);
+	cv::destroyWindow(inputWinName);
 
 	std::cout << "\033[1;32m" << "End" << "\033[0m" << std::endl;
 	return 0;
