@@ -5,45 +5,15 @@
 #include "lib/arturo/functions.h"
 #include "lib/arturo/Circle/Circle.h"
 #include "lib/dayan/tools.h"
-//#include "lib/dayan/Config.h"
+#include "lib/dayan/Config.h"
+#include "lib/dayan/functions.h"
 #include "lib/dayan/KalmanFilterExtended.h"
 
 
 int main(int argc, char** argv)
 {
 	std::string data_path = argc < 2 ? "ball_orange" : argv[1];
-//	dayan::Config::loadData(data_path);
-
-	std::string file_color = "./media/" + data_path + "/color.png";
-	std::string file_diameter_cm = "./media/" + data_path + "/diameter_cm.txt";
-	std::string file_times = "./media/" + data_path + "/times.txt";
-	std::string file_video = "./media/" + data_path + "/video.mkv";
-	std::string file_k = "./media/" + data_path + "/k.yaml";
-
-	// Read color frame
-	cv::Mat colorFrame = cv::imread(file_color);
-	// Read diameter
-	float diameter_cm;
-	std::ifstream file_diameter_cm_stream(file_diameter_cm);
-	file_diameter_cm_stream >> diameter_cm;
-	// Read delta times
-	std::vector<int> deltaTimes;
-	dayan::readDeltaTimes(file_times, deltaTimes);
-	// Input
-	cv::VideoCapture inputVideoCapture;
-	dayan::getVideoCapture(file_video, inputVideoCapture);
-	// K (camera matrix)
-	cv::Mat k;
-	dayan::readMatFromFile(k, file_k);
-	cv::Mat kInv;
-	cv::invert(k, kInv);
-
-	dayan::printMat(k, "k");
-
-	// Radio cm
-	float radio_cm = diameter_cm / 2;
-	// Radio Real (en metros)
-	float radioReal = radio_cm / 100;
+	auto config = dayan::Config::getInstance(data_path);
 
 	std::string inputWinName = "Input";
 	std::string maskWinName = "Mask";
@@ -73,8 +43,6 @@ int main(int argc, char** argv)
 
 	cv::Mat inputFrame, inputFrameLab, mask, mean, iCov;
 	int dt = 0;
-	// Crear un vector vacio de Z (mediciones)
-	std::vector<cv::Mat> list_Z;
 
 //	// KalmanFilter
 //	cv::KalmanFilter kalmanFilter0(6, 5, 0);
@@ -126,11 +94,11 @@ int main(int argc, char** argv)
 	{
 		std::cout << "\033[1;32m" << "Frame: " << ++frameCount << "\033[0m" << std::endl;
 		// We capture an image, and validate that the operation worked.
-		inputVideoCapture >> inputFrame;
+		config->video >> inputFrame;
 		if (inputFrame.empty())
 			break;
 
-		dt += deltaTimes[frameCount];
+		dt += config->dTimes[frameCount];
 
 		std::cout << "dt: " << dt << std::endl;
 
@@ -148,9 +116,9 @@ int main(int argc, char** argv)
 		// In the first iteration we initialize the images that we will use to store results.
 		if (0 == frameCount)
 		{
-			arturo::convertLab(colorFrame, inputFrameLab);
+			arturo::convertLab(config->color, inputFrameLab);
 
-			cv::Mat mMask = cv::Mat::ones(colorFrame.size(), CV_8UC1);
+			cv::Mat mMask = cv::Mat::ones(config->color.size(), CV_8UC1);
 			arturo::MeaniCov(inputFrameLab, mMask, mean, iCov);
 
 			cv::Size sz(inputFrame.cols, inputFrame.rows);
@@ -176,7 +144,6 @@ int main(int argc, char** argv)
 			contourPointMinCount,
 			error,
 			c,
-			list_Z,
 			Z,
 			dt
 		);
