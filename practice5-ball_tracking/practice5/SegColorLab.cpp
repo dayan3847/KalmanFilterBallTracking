@@ -4,10 +4,11 @@
 #include "opencv2/opencv.hpp"
 #include "lib/arturo/functions.h"
 #include "lib/arturo/Circle/Circle.h"
-//#include "lib/dayan/tools.h"
+#include "lib/dayan/tools.h"
 #include "lib/dayan/Config.h"
 #include "lib/dayan/functions.h"
 #include "lib/dayan/BallTrackingKalmanFilterExtended.h"
+#include "lib/dayan/BallTrackingKalmanFilterExtendedImplicit.h"
 
 
 int main(int argc, char** argv)
@@ -45,6 +46,7 @@ int main(int argc, char** argv)
 
 	// KalmanFilter
 	dayan::BallTrackingKalmanFilterExtended kalmanFilter;
+//	dayan::BallTrackingKalmanFilterExtendedImplicit kalmanFilter;
 
 	int dt = 0;
 	int frameCount = -1;
@@ -58,8 +60,6 @@ int main(int argc, char** argv)
 
 		dt += config->dTimes[frameCount];
 		std::cout << "dt: " << dt << std::endl;
-		// Update Matrix A
-		kalmanFilter.update_A(dt);
 
 		// In the first iteration we initialize the images that we will use to store results.
 		if (0 == frameCount)
@@ -77,7 +77,6 @@ int main(int argc, char** argv)
 			arturo::convertLab(inputFrame, inputFrameLab);
 		}
 		Circle* c = nullptr;
-		cv::Mat Z;
 //		std::cout << "\033[1;32m" << "umDistVal: " << umDist.val << "\033[0m" << std::endl;
 //		std::cout << "\033[1;32m" << "umLuz.val: " << umLuz.val << "\033[0m" << std::endl;
 		dayan::makeMeasurement(
@@ -90,7 +89,7 @@ int main(int argc, char** argv)
 			contourPointMinCount,
 			error,
 			c,
-			Z,
+			kalmanFilter.Z,
 			dt
 		);
 		if (nullptr == c)
@@ -100,16 +99,15 @@ int main(int argc, char** argv)
 		}
 		//dayan::printMat(Z, "Z");
 		//dayan::drawCircle(inputFrame, c);
-		dayan::drawCircleByZ(inputFrame, Z, cv::Scalar(255, 0, 0));
+		dayan::drawCircleByZ(inputFrame, kalmanFilter.Z, cv::Scalar(255, 0, 0));
 
 		if (0 == frameCount)
 		{
-			kalmanFilter.init_X(Z);
-			//dayan::getX(Z, kalmanFilter.X);
+			kalmanFilter.init_X();
 		}
 		else
 		{
-			kalmanFilter.predict_correct(Z);
+			kalmanFilter.predict_correct(dt);
 //			dayan::printMat(kalmanFilter.X, "corrected");
 //			dayan::printMat(kalmanFilter.Xp, "predicted");
 			// predicted color red

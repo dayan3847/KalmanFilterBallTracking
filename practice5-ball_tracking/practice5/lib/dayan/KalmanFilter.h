@@ -34,23 +34,31 @@ namespace dayan
 		// errorCovPost
 		cv::Mat P; //!< posteriori error estimate covariance matrix (P(k)): P(k)=(I-K(k)*H)*P'(k)
 
+		cv::Mat Z;
 		cv::Mat h;
 
-		void predict()
+		void predict(const int& dt)
 		{
+			this->update_A(dt);
 			Xp = A * X;
 			Pp = A * P * A.t() + Q;
 		}
 
-		virtual void correct(const cv::Mat& Z)
+		virtual void correct()
 		{
-			// TODO: Implement
 		}
 
-		void predict_correct(const cv::Mat& Z)
+		void predict_correct(const int& dt)
 		{
-			this->predict();
-			this->correct(Z);
+			this->predict(dt);
+			this->correct();
+		}
+		virtual void init_X()
+		{
+		}
+	protected:
+		virtual void update_A(const int& dt)
+		{
 		}
 	};
 

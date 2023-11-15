@@ -15,7 +15,7 @@ namespace dayan
 	class KalmanFilterExtended : public KalmanFilter
 	{
 	public:
-		void correct(const cv::Mat& Z) override
+		void correct() override
 		{
 			update_h_H();
 			cv::Mat Ht = H.t();

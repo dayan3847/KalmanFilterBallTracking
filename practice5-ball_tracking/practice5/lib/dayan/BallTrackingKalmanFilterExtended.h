@@ -5,6 +5,7 @@
 #ifndef BALLTRACKINGKALMANFILTEREXTENDED_H
 #define BALLTRACKINGKALMANFILTEREXTENDED_H
 
+#include "opencv2/opencv.hpp"
 #include "Config.h"
 #include "KalmanFilterExtended.h"
 
@@ -17,7 +18,7 @@ namespace dayan
 		// Constructor
 		BallTrackingKalmanFilterExtended()
 		{
-			Q = (Mat_<float>(6, 6)
+			Q = (cv::Mat_<float>(6, 6)
 				<<
 				1e-4, 0, 0, 0, 0, 0,
 				0, 1e-4, 0, 0, 0, 0,
@@ -26,7 +27,7 @@ namespace dayan
 				0, 0, 0, 0, 1e-4, 0,
 				0, 0, 0, 0, 0, 1e-4
 			);
-			R = (Mat_<float>(5, 5)
+			R = (cv::Mat_<float>(5, 5)
 				<<
 				10, 0, 0, 0, 0,
 				0, 10, 0, 0, 0,
@@ -34,7 +35,7 @@ namespace dayan
 				0, 0, 0, 10, 0,
 				0, 0, 0, 0, 10
 			);
-			P = (Mat_<float>(6, 6)
+			P = (cv::Mat_<float>(6, 6)
 				<<
 				.1, 0, 0, 0, 0, 0,
 				0, .1, 0, 0, 0, 0,
@@ -43,19 +44,16 @@ namespace dayan
 				0, 0, 0, 0, .1, 0,
 				0, 0, 0, 0, 0, .1
 			);
-			//	dayan::printMat(Q, "Q");
-			//	dayan::printMat(R, "R");
-			//	dayan::printMat(P, "P");
 		}
 
 		// Inicializa el primer estado a partir de la primera medida
-		void init_X(const cv::Mat& ZZ)
+		void init_X() override
 		{
 			auto config = dayan::Config::getInstance();
 
-			auto x = ZZ.at<float>(0);
-			auto y = ZZ.at<float>(1);
-			auto r = ZZ.at<float>(4);
+			auto x = this->Z.at<float>(0);
+			auto y = this->Z.at<float>(1);
+			auto r = this->Z.at<float>(4);
 
 			auto Z = config->radio / r;
 			auto X = x * Z;
@@ -71,10 +69,10 @@ namespace dayan
 				0
 			);
 		}
-
-		void update_A(const int& dt)
+		// Update Matrix A
+		void update_A(const int& dt) override
 		{
-			A = (Mat_<float>(6, 6)
+			A = (cv::Mat_<float>(6, 6)
 				<<
 				1, 0, 0, dt, 0, 0,
 				0, 1, 0, 0, dt, 0,
