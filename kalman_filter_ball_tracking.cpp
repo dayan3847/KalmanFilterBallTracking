@@ -2,8 +2,8 @@
 #include <chrono>
 #include <thread>
 #include "opencv2/opencv.hpp"
-#include "third_party_libraries/arturoemx/functions.h"
-#include "third_party_libraries/arturoemx/Circle/Circle.h"
+#include "lib/arturoemx/functions.h"
+#include "lib/arturoemx/Circle/Circle.h"
 #include "src/tools/tools.h"
 #include "src/tools/Config.h"
 #include "src/tools/functions.h"

@@ -8,9 +8,9 @@ find_package(OpenCV REQUIRED)
 
 set(
         SOURCE_FILES
-        third_party_libraries/arturoemx/functions.h
-        third_party_libraries/arturoemx/Circle/Circle.cpp
-        third_party_libraries/arturoemx/Circle/Circle.h
+        lib/arturoemx/functions.h
+        lib/arturoemx/Circle/Circle.cpp
+        lib/arturoemx/Circle/Circle.h
         src/tools/tools.h
         src/tools/Config.h
         src/tools/functions.h

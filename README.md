@@ -56,10 +56,10 @@ This project depends on the following libraries:
 * https://github.com/arturoemx/Circle
 * https://github.com/arturoemx/Curvature
 
-The following command downloads the necessary libraries to the `third_party_libraries` folder:
+The following command downloads the necessary libraries to the `lib` folder:
 
 ```sh
-sh third_party_libraries_download.sh
+sh download_libraries.sh
 ```
 
 ## Analysis and Matrices
