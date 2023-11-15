@@ -51,7 +51,7 @@ Orange ball with Extended Kalman Filter:
 
 ## Installation
 
-This project depends on the following [Arturo Espinosa Romero](https://github.com/arturoemx) libraries:
+This project depends on the following libraries:
 
 * https://github.com/arturoemx/Circle
 * https://github.com/arturoemx/Curvature
@@ -61,3 +61,14 @@ The following command downloads the necessary libraries to the `third_party_libr
 ```sh
 sh third_party_libraries_download.sh
 ```
+
+## Analysis and Matrices
+
+* [Extended Kalman Filter](doc/ball_tracking_kalman_filter_extended.ipynb)
+* [Implicit Extended Kalman Filter](doc/ball_tracking_kalman_filter_extended_implicit.ipynb)
+
+## Colaborators
+
+* [Arturo Espinosa](https://github.com/arturoemx)
+* [Dayan Bravo](https://github.com/dayan3847)
+* [Mario Herrera](https://github.com/mario-infor)
