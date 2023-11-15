@@ -19,9 +19,10 @@
 
 ## Environments
 
-* **Tennis ball:** `ball_tennis`
+* **Tennis ball:** `ball_tennis` (default)
 * **Orange ball:** `ball_orange`
 * **Red ball:** `ball_red`
+* **Green ball:** `ball_green` (in legend)
 
 <img alt="ball_green" src="doc/ex_ball_tennis.png" width="30%"/><img alt="ball_green" src="doc/ex_ball_orange.png" width="30%"/><img alt="ball_green" src="doc/ex_ball_red.png" width="30%"/>
 
@@ -36,16 +37,16 @@
 
 ## Examples:
 
-Tennis ball with Extended Kalman Filter:
+Tennis ball with Implicit Extended Kalman Filter:
 
 ```sh
-./KalmanFilterBallTracking ball_tennis 0;
+./KalmanFilterBallTracking ball_tennis 1;
 ```
 
-Orange ball with Implicit Extended Kalman Filter:
+Orange ball with Extended Kalman Filter:
 
 ```sh
-./KalmanFilterBallTracking ball_orange 1;
+./KalmanFilterBallTracking ball_orange 0;
 ```
 
 ## Installation
