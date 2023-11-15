@@ -17,20 +17,20 @@ namespace dayan
 		Config(const std::string& data_path)
 		{
 			// Color
-			std::string file_color = "./media/" + data_path + "/color.png";
+			std::string file_color = "./data/" + data_path + "/color.png";
 			this->color = cv::imread(file_color);
 			// Radio
-			std::string file_radio = "./media/" + data_path + "/radio.txt";
+			std::string file_radio = "./data/" + data_path + "/radio.txt";
 			std::ifstream file_radio_stream(file_radio);
 			file_radio_stream >> this->radio;
 			// Delta Times
-			std::string file_times = "./media/" + data_path + "/times.txt";
+			std::string file_times = "./data/" + data_path + "/times.txt";
 			dayan::readDeltaTimes(file_times, this->dTimes);
 			// Video
-			std::string file_video = "./media/" + data_path + "/video.mkv";
+			std::string file_video = "./data/" + data_path + "/video.mkv";
 			dayan::getVideoCapture(file_video, this->video);
 			// K (camera matrix)
-			std::string file_k = "./media/" + data_path + "/k.yaml";
+			std::string file_k = "./data/" + data_path + "/k.yaml";
 			dayan::readMatFromFile(this->k, file_k);
 			cv::invert(this->k, this->kInv);
 			// Crear un vector vacio de Z (mediciones)

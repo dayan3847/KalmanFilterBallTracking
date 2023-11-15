@@ -6,8 +6,8 @@
 #define BALLTRACKINGKALMANFILTEREXTENDED_H
 
 #include "opencv2/opencv.hpp"
-#include "Config.h"
-#include "KalmanFilterExtended.h"
+#include "../tools/Config.h"
+#include "../kf/KalmanFilterExtended.h"
 
 namespace dayan
 {

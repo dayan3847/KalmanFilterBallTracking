@@ -2,14 +2,14 @@
 #include <chrono>
 #include <thread>
 #include "opencv2/opencv.hpp"
-#include "lib/arturo/functions.h"
-#include "lib/arturo/Circle/Circle.h"
-#include "lib/dayan/tools.h"
-#include "lib/dayan/Config.h"
-#include "lib/dayan/functions.h"
-#include "lib/dayan/KalmanFilterType.h"
-#include "lib/dayan/BallTrackingKalmanFilterExtended.h"
-#include "lib/dayan/BallTrackingKalmanFilterExtendedImplicit.h"
+#include "third_party_libraries/arturoemx/functions.h"
+#include "third_party_libraries/arturoemx/Circle/Circle.h"
+#include "src/tools/tools.h"
+#include "src/tools/Config.h"
+#include "src/tools/functions.h"
+#include "src/kf/KalmanFilterType.h"
+#include "src/ball_tracking/BallTrackingKalmanFilterExtended.h"
+#include "src/ball_tracking/BallTrackingKalmanFilterExtendedImplicit.h"
 
 
 int main(int argc, char** argv)
@@ -146,7 +146,7 @@ int main(int argc, char** argv)
 //		break;
 	} while (cv::waitKeyEx(30) < 0);
 
-	imwrite("./media/" + data_path + "/LastFrame.png", inputFrame);
+	imwrite("./data/" + data_path + "/LastFrame.png", inputFrame);
 
 	// Close windows that were opened.
 	cv::destroyWindow(maskWinName);

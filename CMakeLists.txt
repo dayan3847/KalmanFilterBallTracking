@@ -8,18 +8,18 @@ find_package(OpenCV REQUIRED)
 
 set(
         SOURCE_FILES
-        lib/arturo/functions.h
-        lib/arturo/Circle/Circle.cpp
-        lib/arturo/Circle/Circle.h
-        lib/dayan/tools.h
-        lib/dayan/Config.h
-        lib/dayan/functions.h
-        lib/dayan/KalmanFilterType.h
-        lib/dayan/KalmanFilter.h
-        lib/dayan/KalmanFilterExtended.h
-        lib/dayan/KalmanFilterExtendedImplicit.h
-        lib/dayan/BallTrackingKalmanFilterExtended.h
-        lib/dayan/BallTrackingKalmanFilterExtendedImplicit.h
+        third_party_libraries/arturoemx/functions.h
+        third_party_libraries/arturoemx/Circle/Circle.cpp
+        third_party_libraries/arturoemx/Circle/Circle.h
+        src/tools/tools.h
+        src/tools/Config.h
+        src/tools/functions.h
+        src/kf/KalmanFilterType.h
+        src/kf/KalmanFilter.h
+        src/kf/KalmanFilterExtended.h
+        src/kf/KalmanFilterExtendedImplicit.h
+        src/ball_tracking/BallTrackingKalmanFilterExtended.h
+        src/ball_tracking/BallTrackingKalmanFilterExtendedImplicit.h
 )
 
 add_executable(SegColorLab kalman_filter_ball_tracking.cpp ${SOURCE_FILES})
