@@ -88,67 +88,6 @@ namespace dayan
 		config->list_Z.push_back(Z);
 	}
 
-	// obtener un estado inicial a partir de una medicion
-	void getX(const cv::Mat& ZZ, cv::Mat& XX)
-	{
-		auto config = dayan::Config::getInstance();
-
-		auto x = ZZ.at<float>(0);
-		auto y = ZZ.at<float>(1);
-		auto r = ZZ.at<float>(4);
-
-		auto Z = config->radio / r;
-		auto X = x * Z;
-		auto Y = y * Z;
-
-		XX = (cv::Mat_<float>(6, 1)
-			<<
-			X,
-			Y,
-			Z,
-			0,
-			0,
-			0
-		);
-	}
-	// obtener medicion a partir del estado
-	void getZ(const cv::Mat& X, const cv::Mat& H, cv::Mat& Z)
-	{
-		Z = H * X;
-	}
-	// a partir de un estado, obtener h(X) y su jacobiano
-	void getH(const cv::Mat& XX, cv::Mat& h, cv::Mat& H)
-	{
-		auto config = dayan::Config::getInstance();
-
-		float X = XX.at<float>(0);
-		float Y = XX.at<float>(1);
-		float Z = XX.at<float>(2);
-		float Xp = XX.at<float>(3);
-		float Yp = XX.at<float>(4);
-		float Zp = XX.at<float>(5);
-
-		h = (cv::Mat_<float>(5, 1)
-			<<
-			X / Z,
-			Y / Z,
-			(Xp + (X / Z) * Zp) / Z,
-			(Yp + (Y / Z) * Zp) / Z,
-			config->radio / Z
-		);
-		auto Z2 = Z * Z;
-		auto Z3 = Z2 * Z;
-		auto Zp_Z2 = Zp / Z2;
-		H = (cv::Mat_<float>(5, 6)
-			<<
-			1 / Z, 0, -X / Z2, 0, 0, 0,
-			0, 1 / Z, -Y / Z2, 0, 0, 0,
-			Zp_Z2, 0, Xp / Z2 - 2 * (X * Zp + Z * Xp) / Z3, 1 / Z, 0, X / Z2,
-			0, Zp_Z2, Yp / Z2 - 2 * (Y * Zp + Z * Yp) / Z3, 0, 1 / Z, Y / Z2,
-			0, 0, -config->radio / Z2, 0, 0, 0
-		);
-	}
-
 	// pintar el circulo a partir de una medicion
 	void drawCircleByZ(
 		const cv::Mat& inputFrame,
