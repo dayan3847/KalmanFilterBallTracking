@@ -6,20 +6,18 @@
 #define KALMANFILTEREXTENDED_H
 
 #include "opencv2/opencv.hpp"
-#include "tools.h"
 #include "KalmanFilter.h"
 
 namespace dayan
 {
 
 	// Extended Kalman Filter
-	class KalmanFilterExtended : public dayan::KalmanFilter
+	class KalmanFilterExtended : public KalmanFilter
 	{
 	public:
 		void correct(const cv::Mat& Z) override
 		{
-			cv::Mat h;
-			dayan::getH(Xp, h, H);
+			update_h_H();
 			cv::Mat Ht = H.t();
 			cv::Mat HxPpxHtmR = H * Pp * Ht + R;
 			cv::Mat inv_HxPpxHtmR;
@@ -28,6 +26,11 @@ namespace dayan
 			X = Xp + K * (Z - h);
 			cv::Mat I = cv::Mat::eye(6, 6, CV_32F);
 			P = (I - K * H) * Pp;
+		}
+	protected:
+		virtual void update_h_H()
+		{
+
 		}
 	};
 

@@ -7,7 +7,7 @@
 //#include "lib/dayan/tools.h"
 #include "lib/dayan/Config.h"
 #include "lib/dayan/functions.h"
-#include "lib/dayan/KalmanFilterExtended.h"
+#include "lib/dayan/BallTrackingKalmanFilterExtended.h"
 
 
 int main(int argc, char** argv)
@@ -44,36 +44,7 @@ int main(int argc, char** argv)
 	cv::Mat inputFrame, inputFrameLab, mask, mean, iCov;
 
 	// KalmanFilter
-	dayan::KalmanFilterExtended kalmanFilter;
-	kalmanFilter.Q = (Mat_<float>(6, 6)
-		<<
-		1e-4, 0, 0, 0, 0, 0,
-		0, 1e-4, 0, 0, 0, 0,
-		0, 0, 1e-4, 0, 0, 0,
-		0, 0, 0, 1e-4, 0, 0,
-		0, 0, 0, 0, 1e-4, 0,
-		0, 0, 0, 0, 0, 1e-4
-	);
-//	dayan::printMat(kalmanFilter.Q, "Q");
-	kalmanFilter.R = (Mat_<float>(5, 5)
-		<<
-		10, 0, 0, 0, 0,
-		0, 10, 0, 0, 0,
-		0, 0, 10, 0, 0,
-		0, 0, 0, 10, 0,
-		0, 0, 0, 0, 10
-	);
-//	dayan::printMat(kalmanFilter.R, "R");
-	kalmanFilter.P = (Mat_<float>(6, 6)
-		<<
-		.1, 0, 0, 0, 0, 0,
-		0, .1, 0, 0, 0, 0,
-		0, 0, .1, 0, 0, 0,
-		0, 0, 0, .1, 0, 0,
-		0, 0, 0, 0, .1, 0,
-		0, 0, 0, 0, 0, .1
-	);
-//	dayan::printMat(kalmanFilter.P, "P");
+	dayan::BallTrackingKalmanFilterExtended kalmanFilter;
 
 	int dt = 0;
 	int frameCount = -1;
@@ -86,19 +57,9 @@ int main(int argc, char** argv)
 			break;
 
 		dt += config->dTimes[frameCount];
-
 		std::cout << "dt: " << dt << std::endl;
-
-		// Matrix A
-		kalmanFilter.A = (Mat_<float>(6, 6)
-			<<
-			1, 0, 0, dt, 0, 0,
-			0, 1, 0, 0, dt, 0,
-			0, 0, 1, 0, 0, dt,
-			0, 0, 0, 1, 0, 0,
-			0, 0, 0, 0, 1, 0,
-			0, 0, 0, 0, 0, 1
-		);
+		// Update Matrix A
+		kalmanFilter.update_A(dt);
 
 		// In the first iteration we initialize the images that we will use to store results.
 		if (0 == frameCount)
@@ -143,7 +104,8 @@ int main(int argc, char** argv)
 
 		if (0 == frameCount)
 		{
-			dayan::getX(Z, kalmanFilter.X);
+			kalmanFilter.init_X(Z);
+			//dayan::getX(Z, kalmanFilter.X);
 		}
 		else
 		{
@@ -160,7 +122,7 @@ int main(int argc, char** argv)
 		imshow(maskWinName, mask);
 		imshow(inputWinName, inputFrame);
 
-		std::cout << "error permitido: " << error << std::endl;
+		//std::cout << "error permitido: " << error << std::endl;
 
 		if (0 < sleep)
 			std::this_thread::sleep_for(std::chrono::seconds(1));

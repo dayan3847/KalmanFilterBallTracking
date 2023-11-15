@@ -34,6 +34,8 @@ namespace dayan
 		// errorCovPost
 		cv::Mat P; //!< posteriori error estimate covariance matrix (P(k)): P(k)=(I-K(k)*H)*P'(k)
 
+		cv::Mat h;
+
 		void predict()
 		{
 			Xp = A * X;
