@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.26)
-project(practice5)
+project(KalmanFilterBallTracking)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -22,5 +22,5 @@ set(
         src/ball_tracking/BallTrackingKalmanFilterExtendedImplicit.h
 )
 
-add_executable(SegColorLab kalman_filter_ball_tracking.cpp ${SOURCE_FILES})
-target_link_libraries(SegColorLab ${OpenCV_LIBS})
+add_executable(KalmanFilterBallTracking kalman_filter_ball_tracking.cpp ${SOURCE_FILES})
+target_link_libraries(KalmanFilterBallTracking ${OpenCV_LIBS})
