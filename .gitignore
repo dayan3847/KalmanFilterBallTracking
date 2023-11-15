@@ -1,5 +1,2 @@
-# PyCharm
 .idea/
-
-auxil/
-*.synctex.gz
+cmake-build-debug/

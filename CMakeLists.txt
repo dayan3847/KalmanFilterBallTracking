@@ -22,5 +22,5 @@ set(
         lib/dayan/BallTrackingKalmanFilterExtendedImplicit.h
 )
 
-add_executable(SegColorLab SegColorLab.cpp ${SOURCE_FILES})
+add_executable(SegColorLab kalman_filter_ball_tracking.cpp ${SOURCE_FILES})
 target_link_libraries(SegColorLab ${OpenCV_LIBS})
