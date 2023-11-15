@@ -45,8 +45,10 @@ int main(int argc, char** argv)
 	cv::Mat inputFrame, inputFrameLab, mask, mean, iCov;
 
 	// KalmanFilter
-	dayan::BallTrackingKalmanFilterExtended kalmanFilter;
-//	dayan::BallTrackingKalmanFilterExtendedImplicit kalmanFilter;
+	dayan::KalmanFilter* kalmanFilter = nullptr;
+
+	kalmanFilter = new dayan::BallTrackingKalmanFilterExtended();
+//	kalmanFilter = new dayan::BallTrackingKalmanFilterExtendedImplicit();
 
 	int dt = 0;
 	int frameCount = -1;
@@ -89,7 +91,7 @@ int main(int argc, char** argv)
 			contourPointMinCount,
 			error,
 			c,
-			kalmanFilter.Z,
+			kalmanFilter->Z,
 			dt
 		);
 		if (nullptr == c)
@@ -99,21 +101,21 @@ int main(int argc, char** argv)
 		}
 		//dayan::printMat(Z, "Z");
 		//dayan::drawCircle(inputFrame, c);
-		dayan::drawCircleByZ(inputFrame, kalmanFilter.Z, cv::Scalar(255, 0, 0));
+		dayan::drawCircleByZ(inputFrame, kalmanFilter->Z, cv::Scalar(255, 0, 0));
 
 		if (0 == frameCount)
 		{
-			kalmanFilter.init_X();
+			kalmanFilter->init_X();
 		}
 		else
 		{
-			kalmanFilter.predict_correct(dt);
-//			dayan::printMat(kalmanFilter.X, "corrected");
-//			dayan::printMat(kalmanFilter.Xp, "predicted");
+			kalmanFilter->predict_correct(dt);
+//			dayan::printMat(kalmanFilter->X, "corrected");
+//			dayan::printMat(kalmanFilter->Xp, "predicted");
 			// predicted color red
-			//dayan::drawCircleByX(inputFrame, kalmanFilter.Xp, cv::Scalar(0, 0, 255));
+			//dayan::drawCircleByX(inputFrame, kalmanFilter->Xp, cv::Scalar(0, 0, 255));
 			// corrected color green
-			dayan::drawCircleByX(inputFrame, kalmanFilter.X, cv::Scalar(0, 255, 0));
+			dayan::drawCircleByX(inputFrame, kalmanFilter->X, cv::Scalar(0, 255, 0));
 		}
 
 		// Show images

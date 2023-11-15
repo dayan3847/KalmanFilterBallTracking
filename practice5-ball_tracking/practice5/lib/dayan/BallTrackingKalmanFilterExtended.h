@@ -83,7 +83,7 @@ namespace dayan
 			);
 		}
 	protected:
-		void update_h_H() override
+		void update_h_jacobians() override
 		{
 			auto config = dayan::Config::getInstance();
 

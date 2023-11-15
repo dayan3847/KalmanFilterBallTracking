@@ -83,7 +83,7 @@ namespace dayan
 			);
 		}
 	protected:
-		void update_h_H() override
+		void update_h_jacobians() override
 		{
 			auto config = dayan::Config::getInstance();
 
@@ -94,24 +94,38 @@ namespace dayan
 			float Yp = this->Xp.at<float>(4);
 			float Zp = this->Xp.at<float>(5);
 
+			auto x = this->Z.at<float>(0);
+			auto y = this->Z.at<float>(1);
+			auto xp = this->Z.at<float>(2);
+			auto yp = this->Z.at<float>(3);
+			auto r = this->Z.at<float>(4);
+
 			h = (cv::Mat_<float>(5, 1)
 				<<
-				X / Z,
-				Y / Z,
-				(Xp + (X / Z) * Zp) / Z,
-				(Yp + (Y / Z) * Zp) / Z,
-				config->radio / Z
+				x - X / Z,
+				y - Y / Z,
+				xp - (Xp + x * Zp) / Z,
+				yp - (Yp + y * Zp) / Z,
+				r - config->radio / Z
 			);
 			auto Z2 = Z * Z;
-			auto Z3 = Z2 * Z;
-			auto Zp_Z2 = Zp / Z2;
+			auto _1_Z = -1 / Z;
 			H = (cv::Mat_<float>(5, 6)
 				<<
-				1 / Z, 0, -X / Z2, 0, 0, 0,
-				0, 1 / Z, -Y / Z2, 0, 0, 0,
-				Zp_Z2, 0, Xp / Z2 - 2 * (X * Zp + Z * Xp) / Z3, 1 / Z, 0, X / Z2,
-				0, Zp_Z2, Yp / Z2 - 2 * (Y * Zp + Z * Yp) / Z3, 0, 1 / Z, Y / Z2,
-				0, 0, -config->radio / Z2, 0, 0, 0
+				_1_Z, 0, X / Z2, 0, 0, 0,
+				0, _1_Z, Y / Z2, 0, 0, 0,
+				0, 0, (Xp + x * Zp) / Z2, _1_Z, 0, -x / Z,
+				0, 0, (Yp + y * Zp) / Z2, 0, _1_Z, -y / Z,
+				0, 0, config->radio / Z2, 0, 0, 0
+			);
+			auto Zp_Z = -Zp / Z;
+			J = (cv::Mat_<float>(5, 5)
+				<<
+				1, 0, 0, 0, 0,
+				0, 1, 0, 0, 0,
+				Zp_Z, 0, 1, 0, 0,
+				0, Zp_Z, 0, 1, 0,
+				0, 0, 0, 0, 1
 			);
 		}
 	};

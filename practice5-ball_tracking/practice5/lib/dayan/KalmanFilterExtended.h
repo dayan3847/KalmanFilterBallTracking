@@ -17,20 +17,26 @@ namespace dayan
 	public:
 		void correct() override
 		{
-			update_h_H();
-			cv::Mat Ht = H.t();
-			cv::Mat HxPpxHtmR = H * Pp * Ht + R;
-			cv::Mat inv_HxPpxHtmR;
-			cv::invert(HxPpxHtmR, inv_HxPpxHtmR, cv::DECOMP_LU);
-			K = Pp * Ht * inv_HxPpxHtmR;
+			this->update_h_jacobians();
+			this->update_K();
 			X = Xp + K * (Z - h);
 			cv::Mat I = cv::Mat::eye(6, 6, CV_32F);
 			P = (I - K * H) * Pp;
 		}
 	protected:
-		virtual void update_h_H()
+		// Actualiza h y sus jacobianos (H y J[si es implicito])
+		virtual void update_h_jacobians()
 		{
 
+		}
+		// Actualiza K
+		void update_K()
+		{
+			cv::Mat Ht = H.t();
+			cv::Mat HxPpxHtmR = H * Pp * Ht + R;
+			cv::Mat inv_HxPpxHtmR;
+			cv::invert(HxPpxHtmR, inv_HxPpxHtmR, cv::DECOMP_LU);
+			K = Pp * Ht * inv_HxPpxHtmR;
 		}
 	};
 
