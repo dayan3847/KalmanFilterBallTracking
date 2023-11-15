@@ -7,6 +7,7 @@
 #include "lib/dayan/tools.h"
 #include "lib/dayan/Config.h"
 #include "lib/dayan/functions.h"
+#include "lib/dayan/KalmanFilterType.h"
 #include "lib/dayan/BallTrackingKalmanFilterExtended.h"
 #include "lib/dayan/BallTrackingKalmanFilterExtendedImplicit.h"
 
@@ -14,12 +15,31 @@
 int main(int argc, char** argv)
 {
 	std::string data_path = argc < 2 ? "ball_tennis" : argv[1];
+	dayan::KalmanFilterType kfType = argc < 3 ? dayan::KalmanFilterType::Extended
+											  : (dayan::KalmanFilterType)atoi(argv[2]);
 	auto config = dayan::Config::getInstance(data_path);
 
-	std::string maskWinName = "Mask";
 	std::string inputWinName = "Input";
-	cv::namedWindow(maskWinName, 1);
+	std::string maskWinName = "Mask";
+
+	// KalmanFilter
+	dayan::KalmanFilter* kalmanFilter = nullptr;
+	switch (kfType)
+	{
+	case dayan::KalmanFilterType::Extended:
+		kalmanFilter = new dayan::BallTrackingKalmanFilterExtended();
+		inputWinName = "Extended Kalman Filter";
+		break;
+	case dayan::KalmanFilterType::ExtendedImplicit:
+		kalmanFilter = new dayan::BallTrackingKalmanFilterExtendedImplicit();
+		inputWinName = "Implicit Extended Kalman Filter";
+		break;
+	default:
+		std::cout << "\033[1;31m" << "KalmanFilterType no soportado" << "\033[0m" << std::endl;
+		return -1;
+	}
 	cv::namedWindow(inputWinName, 1);
+	cv::namedWindow(maskWinName, 1);
 
 	int sleep = 0;
 	cv::createTrackbar("Sleep", inputWinName, &sleep, 1);
@@ -43,12 +63,6 @@ int main(int argc, char** argv)
 	cv::createTrackbar("Contour Point Count Min", inputWinName, &contourPointMinCount, 100);
 
 	cv::Mat inputFrame, inputFrameLab, mask, mean, iCov;
-
-	// KalmanFilter
-	dayan::KalmanFilter* kalmanFilter = nullptr;
-
-	kalmanFilter = new dayan::BallTrackingKalmanFilterExtended();
-//	kalmanFilter = new dayan::BallTrackingKalmanFilterExtendedImplicit();
 
 	int dt = 0;
 	int frameCount = -1;

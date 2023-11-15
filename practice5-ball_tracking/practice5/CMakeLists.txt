@@ -14,6 +14,7 @@ set(
         lib/dayan/tools.h
         lib/dayan/Config.h
         lib/dayan/functions.h
+        lib/dayan/KalmanFilterType.h
         lib/dayan/KalmanFilter.h
         lib/dayan/KalmanFilterExtended.h
         lib/dayan/KalmanFilterExtendedImplicit.h
