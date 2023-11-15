@@ -23,9 +23,7 @@
 * **Orange ball:** `ball_orange`
 * **Red ball:** `ball_red`
 
-<img alt="ball_green" src="doc/ex_ball_tennis.png" width="30%"/>
-<img alt="ball_green" src="doc/ex_ball_orange.png" width="30%"/>
-<img alt="ball_green" src="doc/ex_ball_red.png" width="30%"/>
+<img alt="ball_green" src="doc/ex_ball_tennis.png" width="30%"/><img alt="ball_green" src="doc/ex_ball_orange.png" width="30%"/><img alt="ball_green" src="doc/ex_ball_red.png" width="30%"/>
 
 ## Kalman Filter Types
 
