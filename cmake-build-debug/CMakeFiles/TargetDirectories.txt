@@ -1,3 +1,0 @@
-/home/dayan3847/w/Uady/estimacion bayesiana/bk_borrar/KalmanFilterBallTracking/cmake-build-debug/CMakeFiles/KalmanFilterBallTracking.dir
-/home/dayan3847/w/Uady/estimacion bayesiana/bk_borrar/KalmanFilterBallTracking/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/dayan3847/w/Uady/estimacion bayesiana/bk_borrar/KalmanFilterBallTracking/cmake-build-debug/CMakeFiles/rebuild_cache.dir
