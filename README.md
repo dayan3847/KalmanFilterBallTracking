@@ -62,6 +62,44 @@ The following command downloads the necessary libraries to the `third_party_libr
 sh third_party_libraries_download.sh
 ```
 
+## Install with CMake
+
+### Requirements
+
+#### CMake
+
+```sh
+sudo apt install cmake
+```
+
+```sh
+cmake --version
+```
+
+#### Ninja Build
+
+```sh
+sudo apt install ninja-build
+```
+
+```sh
+ninja --version
+```
+
+See: https://lindevs.com/install-ninja-build-system-on-ubuntu/
+
+### Reload CMake Project
+
+```sh
+cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -S ./ -B ./cmake-build-debug
+```
+
+### Build
+
+```sh
+cmake --build ./cmake-build-debug --target KalmanFilterBallTracking -j 6
+```
+
 ## Analysis and Matrices
 
 * [Extended Kalman Filter](doc/ball_tracking_kalman_filter_extended.ipynb)
