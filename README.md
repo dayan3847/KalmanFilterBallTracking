@@ -64,29 +64,33 @@ sh third_party_libraries_download.sh
 
 ## Install with CMake
 
-### Requirements
+### Requirements (Ubuntu 20.04)
 
-#### CMake
+#### [CMake](https://cmake.org/)
 
 ```sh
 sudo apt install cmake
 ```
 
+Test:
+
 ```sh
 cmake --version
 ```
 
-#### Ninja Build
+#### [Ninja Build](https://ninja-build.org/)
 
 ```sh
 sudo apt install ninja-build
 ```
 
+* See: https://lindevs.com/install-ninja-build-system-on-ubuntu/
+
+Test:
+
 ```sh
 ninja --version
 ```
-
-See: https://lindevs.com/install-ninja-build-system-on-ubuntu/
 
 ### Reload CMake Project
 
