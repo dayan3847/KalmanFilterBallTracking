@@ -67,6 +67,48 @@ The following command downloads the necessary libraries to the `lib` folder:
 sh download_libraries.sh
 ```
 
+## Install with CMake
+
+### Requirements (Ubuntu 20.04)
+
+#### [CMake](https://cmake.org/)
+
+```sh
+sudo apt install cmake
+```
+
+Test:
+
+```sh
+cmake --version
+```
+
+#### [Ninja Build](https://ninja-build.org/)
+
+```sh
+sudo apt install ninja-build
+```
+
+* See: https://lindevs.com/install-ninja-build-system-on-ubuntu/
+
+Test:
+
+```sh
+ninja --version
+```
+
+### Reload CMake Project
+
+```sh
+cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -S ./ -B ./cmake-build-debug
+```
+
+### Build
+
+```sh
+cmake --build ./cmake-build-debug --target KalmanFilterBallTracking -j 6
+```
+
 ## Analysis and Matrices
 
 * [Extended Kalman Filter](doc/ball_tracking_kalman_filter_extended.ipynb)
