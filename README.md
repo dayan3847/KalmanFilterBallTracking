@@ -39,8 +39,13 @@
 
 Tennis ball with Implicit Extended Kalman Filter:
 
+
 ```sh
-./KalmanFilterBallTracking ball_tennis 1;
+cmake -DCMAKE_BUILD_TYPE=Debug -S ./cmake-build-debug2
+```
+
+```sh
+./kalman_filter_ball_tracking ball_tennis 1;
 ```
 
 Orange ball with Extended Kalman Filter:

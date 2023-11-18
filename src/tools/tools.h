@@ -82,7 +82,7 @@ namespace dayan
 		readTimes(timesFilename, times);
 		deltaTimes = std::vector<int>(times.size());
 		deltaTimes[0] = 0;
-		for (int i = 1; i < times.size(); ++i)
+		for (int i = 1; i < (int)times.size(); ++i)
 		{
 			deltaTimes[i] = times[i] - times[i - 1];
 		}
@@ -120,7 +120,7 @@ namespace dayan
 		std::vector<Circle*> circles;
 		for (auto& contour : contours)
 		{
-			if (contourPointMinCount > contour.size())
+			if (contourPointMinCount > (int)contour.size())
 				continue;
 			std::cout << "cantidad de puntos del contorno: " << contour.size() << std::endl;
 			std::vector</*arturo::*/Point3s> pts;

@@ -44,7 +44,7 @@ int main(int argc, char** argv)
 	int sleep = 0;
 	cv::createTrackbar("Sleep", inputWinName, &sleep, 1);
 	// Slide 1 (distancia)
-	int dSlidePos = 200;
+//	int dSlidePos = 200;
 //	arturo::barData umDist(40. / SLIDE_MAX, 47);
 //	cv::createTrackbar("umDist", inputWinName, &dSlidePos, SLIDE_MAX, arturo::umDistChange,
 //		(void*)&umDist);
