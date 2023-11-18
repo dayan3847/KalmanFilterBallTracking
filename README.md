@@ -108,6 +108,7 @@ cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -S ./ -B ./cm
 
 ```sh
 cmake --build ./cmake-build-debug --target KalmanFilterBallTracking -j 6
+cp ./cmake-build-debug/KalmanFilterBallTracking .
 ```
 
 ## Install with Make (by Arturo Espinosa)
