@@ -31,24 +31,6 @@
 * **Extended Kalman Filter:** `0` (default)
 * **Implicit Extended Kalman Filter:** `1`
 
-## Run
-
-`./KalmanFilterBallTracking [ENVIRONMENT] [KALMAN_FILTER_TYPE];`
-
-## Examples:
-
-Tennis ball with Implicit Extended Kalman Filter:
-
-```sh
-./kalman_filter_ball_tracking ball_tennis 1;
-```
-
-Orange ball with Extended Kalman Filter:
-
-```sh
-./KalmanFilterBallTracking ball_orange 0;
-```
-
 ## Installation
 
 This project depends on the following library:
@@ -118,6 +100,24 @@ make
 ```
 
 You can see: [Makefile](Makefile)
+
+## Run
+
+`./KalmanFilterBallTracking [ENVIRONMENT] [KALMAN_FILTER_TYPE];`
+
+## Examples:
+
+Tennis ball with Implicit Extended Kalman Filter:
+
+```sh
+./KalmanFilterBallTracking ball_tennis 1;
+```
+
+Orange ball with Extended Kalman Filter:
+
+```sh
+./KalmanFilterBallTracking ball_orange 0;
+```
 
 ## Analysis and Matrices
 
