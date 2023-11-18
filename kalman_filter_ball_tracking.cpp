@@ -11,12 +11,12 @@
 #include "src/ball_tracking/BallTrackingKalmanFilterExtended.h"
 #include "src/ball_tracking/BallTrackingKalmanFilterExtendedImplicit.h"
 
-
 int main(int argc, char** argv)
 {
 	std::string data_path = argc < 2 ? "ball_tennis" : argv[1];
-	dayan::KalmanFilterType kfType = argc < 3 ? dayan::KalmanFilterType::Extended
-											  : (dayan::KalmanFilterType)atoi(argv[2]);
+	dayan::KalmanFilterType kfType = argc < 3
+		                                 ? dayan::KalmanFilterType::Extended
+		                                 : (dayan::KalmanFilterType)atoi(argv[2]);
 	auto config = dayan::Config::getInstance(data_path);
 
 	std::string inputWinName = "Input";
@@ -35,7 +35,7 @@ int main(int argc, char** argv)
 		inputWinName = "Implicit Extended Kalman Filter";
 		break;
 	default:
-		std::cout << "\033[1;31m" << "KalmanFilterType no soportado" << "\033[0m" << std::endl;
+		std::cout << "\033[1;31m" << "KalmanFilterType not supported" << "\033[0m" << std::endl;
 		return -1;
 	}
 	cv::namedWindow(inputWinName, 1);
@@ -44,15 +44,19 @@ int main(int argc, char** argv)
 	int sleep = 0;
 	cv::createTrackbar("Sleep", inputWinName, &sleep, 1);
 	// Slide 1 (distancia)
-//	int dSlidePos = 200;
-//	arturo::barData umDist(40. / SLIDE_MAX, 47);
-//	cv::createTrackbar("umDist", inputWinName, &dSlidePos, SLIDE_MAX, arturo::umDistChange,
-//		(void*)&umDist);
-//	arturo::umDistChange(SLIDE_MAX, (void*)&umDist);
+	//	int dSlidePos = 200;
+	//	arturo::barData umDist(40. / SLIDE_MAX, 47);
+	//	cv::createTrackbar("umDist", inputWinName, &dSlidePos, SLIDE_MAX, arturo::umDistChange,
+	//		(void*)&umDist);
+	//	arturo::umDistChange(SLIDE_MAX, (void*)&umDist);
 	// Slide 2 (luz)
 	int lSlidePos = 16;
 	arturo::barData umLuz(100. / SLIDE_MAX, 0);
-	cv::createTrackbar("umLuz", inputWinName, &lSlidePos, SLIDE_MAX, arturo::umLuzChange,
+	cv::createTrackbar("umLuz",
+		inputWinName,
+		&lSlidePos,
+		SLIDE_MAX,
+		arturo::umLuzChange,
 		(void*)&umLuz);
 	arturo::umLuzChange(0, (void*)&umLuz);
 	// Slide 3 (error permitido)
@@ -93,14 +97,15 @@ int main(int argc, char** argv)
 			arturo::convertLab(inputFrame, inputFrameLab);
 		}
 		Circle* c = nullptr;
-//		std::cout << "\033[1;32m" << "umDistVal: " << umDist.val << "\033[0m" << std::endl;
-//		std::cout << "\033[1;32m" << "umLuz.val: " << umLuz.val << "\033[0m" << std::endl;
+		//		std::cout << "\033[1;32m" << "umDistVal: " << umDist.val << "\033[0m" << std::endl;
+		//		std::cout << "\033[1;32m" << "umLuz.val: " << umLuz.val << "\033[0m" << std::endl;
 		dayan::makeMeasurement(
 			inputFrameLab,
 			mask,
 			mean,
 			iCov,
-			50,  //umDist.val,
+			50,
+			//umDist.val,
 			umLuz.val,
 			contourPointMinCount,
 			error,
@@ -119,13 +124,14 @@ int main(int argc, char** argv)
 
 		if (0 == frameCount)
 		{
+			imwrite("./data/" + data_path + "/FirstFrame.png", inputFrame);
 			kalmanFilter->init_X();
 		}
 		else
 		{
 			kalmanFilter->predict_correct(dt);
-//			dayan::printMat(kalmanFilter->X, "corrected");
-//			dayan::printMat(kalmanFilter->Xp, "predicted");
+			//			dayan::printMat(kalmanFilter->X, "corrected");
+			//			dayan::printMat(kalmanFilter->Xp, "predicted");
 			// predicted color red
 			//dayan::drawCircleByX(inputFrame, kalmanFilter->Xp, cv::Scalar(0, 0, 255));
 			// corrected color green
@@ -143,8 +149,9 @@ int main(int argc, char** argv)
 
 		dt = 0;
 		// If the user presses a key, the cycle ends.
-//		break;
-	} while (cv::waitKeyEx(30) < 0);
+		//		break;
+	}
+	while (cv::waitKeyEx(30) < 0);
 
 	imwrite("./data/" + data_path + "/LastFrame.png", inputFrame);
 

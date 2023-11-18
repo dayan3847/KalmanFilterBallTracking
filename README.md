@@ -90,7 +90,6 @@ cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -S ./ -B ./cm
 
 ```sh
 cmake --build ./cmake-build-debug --target KalmanFilterBallTracking -j 6
-cp ./cmake-build-debug/KalmanFilterBallTracking .
 ```
 
 ## Install with Make (by Arturo Espinosa)
@@ -110,13 +109,13 @@ You can see: [Makefile](Makefile)
 Tennis ball with Implicit Extended Kalman Filter:
 
 ```sh
-./KalmanFilterBallTracking ball_tennis 1;
+./cmake-build-debug/KalmanFilterBallTracking ball_tennis 1;
 ```
 
 Orange ball with Extended Kalman Filter:
 
 ```sh
-./KalmanFilterBallTracking ball_orange 0;
+./cmake-build-debug/KalmanFilterBallTracking ball_orange 0;
 ```
 
 ## Analysis and Matrices
