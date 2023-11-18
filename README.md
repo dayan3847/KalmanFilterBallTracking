@@ -39,11 +39,6 @@
 
 Tennis ball with Implicit Extended Kalman Filter:
 
-
-```sh
-cmake -DCMAKE_BUILD_TYPE=Debug -S ./cmake-build-debug2
-```
-
 ```sh
 ./kalman_filter_ball_tracking ball_tennis 1;
 ```
@@ -56,16 +51,22 @@ Orange ball with Extended Kalman Filter:
 
 ## Installation
 
-This project depends on the following libraries:
+This project depends on the following library:
+
+### Circle: (by Arturo Espinosa)
 
 * https://github.com/arturoemx/Circle
-* https://github.com/arturoemx/Curvature
 
-The following command downloads the necessary libraries to the `lib` folder:
+### Clone
 
 ```sh
-sh download_libraries.sh
+git clone https://github.com/arturoemx/Circle lib/arturoemx/Circle
 ```
+
+### Note:
+
+Last
+commit: [1b3e61fd0203164265b804276546465898eaa3b7](https://github.com/arturoemx/Circle/commit/1b3e61fd0203164265b804276546465898eaa3b7)
 
 ## Install with CMake
 
@@ -77,7 +78,7 @@ sh download_libraries.sh
 sudo apt install cmake -y
 ```
 
-Test:
+Check:
 
 ```sh
 cmake --version
@@ -89,9 +90,9 @@ cmake --version
 sudo apt install ninja-build -y
 ```
 
-* See: https://lindevs.com/install-ninja-build-system-on-ubuntu/
+You can see: https://lindevs.com/install-ninja-build-system-on-ubuntu/
 
-Test:
+Check:
 
 ```sh
 ninja --version
@@ -108,6 +109,14 @@ cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -S ./ -B ./cm
 ```sh
 cmake --build ./cmake-build-debug --target KalmanFilterBallTracking -j 6
 ```
+
+## Install with Make (by Arturo Espinosa)
+
+```sh
+make
+```
+
+You can see: [Makefile](Makefile)
 
 ## Analysis and Matrices
 
