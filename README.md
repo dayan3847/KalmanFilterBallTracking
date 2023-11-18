@@ -74,7 +74,7 @@ sh download_libraries.sh
 #### [CMake](https://cmake.org/)
 
 ```sh
-sudo apt install cmake
+sudo apt install cmake -y
 ```
 
 Test:
@@ -86,7 +86,7 @@ cmake --version
 #### [Ninja Build](https://ninja-build.org/)
 
 ```sh
-sudo apt install ninja-build
+sudo apt install ninja-build -y
 ```
 
 * See: https://lindevs.com/install-ninja-build-system-on-ubuntu/
