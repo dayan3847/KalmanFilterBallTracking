@@ -37,6 +37,8 @@ namespace dayan
 		cv::Mat Z;
 		cv::Mat h;
 
+		cv::Mat I; //!< identity matrix
+
 		void predict(const int& dt)
 		{
 			this->update_A(dt);

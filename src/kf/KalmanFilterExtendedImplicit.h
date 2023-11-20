@@ -21,7 +21,6 @@ namespace dayan
 			R = J * R * J.t();
 			this->update_K();
 			X = Xp + K * (-h);
-			cv::Mat I = cv::Mat::eye(6, 6, CV_32F);
 			P = (I - K * H) * Pp;
 		}
 	};

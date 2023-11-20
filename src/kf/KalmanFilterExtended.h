@@ -20,7 +20,6 @@ namespace dayan
 			this->update_h_jacobians();
 			this->update_K();
 			X = Xp + K * (Z - h);
-			cv::Mat I = cv::Mat::eye(6, 6, CV_32F);
 			P = (I - K * H) * Pp;
 		}
 	protected:

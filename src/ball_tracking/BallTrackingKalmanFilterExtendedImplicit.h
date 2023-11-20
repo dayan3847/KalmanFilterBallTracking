@@ -44,6 +44,7 @@ namespace dayan
 				0, 0, 0, 0, .1, 0,
 				0, 0, 0, 0, 0, .1
 			);
+			I = cv::Mat::eye(6, 6, CV_32F);
 		}
 
 		// Inicializa el primer estado a partir de la primera medida
