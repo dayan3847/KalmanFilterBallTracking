@@ -26,8 +26,9 @@ namespace dayan
 		float wm_0;
 		float wc_0;
 		float w_i;
+
 		KalmanFilterUnscented(int n, int m)
-			: KalmanFilter(n, m)
+				: KalmanFilter(n, m)
 		{
 			_2n_1 = 2 * n + 1;
 			auto n_ = (float)n;
@@ -42,14 +43,12 @@ namespace dayan
 			wc_0 = wm_0 + (1 - alpha2 + beta);
 			w_i = 1 / (2 * (n_ + lambda));
 		}
+
 		void correct() override
 		{
 
-			int rows = Pp.rows;
-			int cols = Pp.cols;
 			cv::Mat sqrtP;
-			Pp.copyTo(sqrtP);
-			bool success = cv::Cholesky(Pp.ptr<float>(), Pp.step1(), rows, nullptr, 0, cols);
+			bool success = dayan::cholesky(Pp, sqrtP);
 			if (!success)
 			{
 				std::cout << "Error: Cholesky failed" << std::endl;
@@ -104,11 +103,13 @@ namespace dayan
 			X = Xp + K * (Z - Zmean);
 			P = Pp - K * Smean * K.t();
 		}
+
 	protected:
 		void update_h_jacobians() override
 		{
 			this->get_h(this->Xp, this->h);
 		}
+
 		virtual void get_h(const cv::Mat& XX, cv::Mat& h)
 		{
 

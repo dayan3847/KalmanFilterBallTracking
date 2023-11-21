@@ -94,15 +94,15 @@ namespace dayan
 
 	// identificar el circulo a partir de
 	void makeMeasurement(
-		cv::Mat& inputFrameLab,
-		cv::Mat& mask,
-		cv::Mat& mean,
-		cv::Mat& iCov,
-		float const& umDistVal,
-		float const& umLuzVal,
-		int const& contourPointMinCount,
-		int const& error,
-		Circle*& circle
+			cv::Mat& inputFrameLab,
+			cv::Mat& mask,
+			cv::Mat& mean,
+			cv::Mat& iCov,
+			float const& umDistVal,
+			float const& umLuzVal,
+			int const& contourPointMinCount,
+			int const& error,
+			Circle*& circle
 	)
 	{
 		arturo::Umbraliza(inputFrameLab, mask, mean, iCov, umDistVal, umLuzVal);
@@ -122,13 +122,13 @@ namespace dayan
 
 		// Fit Circles
 		std::vector<Circle*> circles;
-		for (auto& contour : contours)
+		for (auto& contour: contours)
 		{
 			if (contourPointMinCount > (int)contour.size())
 				continue;
 			std::cout << "cantidad de puntos del contorno: " << contour.size() << std::endl;
 			std::vector</*arturo::*/Point3s> pts;
-			for (auto& contourPoint : contour)
+			for (auto& contourPoint: contour)
 			{
 				Point3s p;
 				p.x = contourPoint.x;
@@ -154,7 +154,7 @@ namespace dayan
 		}
 
 		// Draw Circles ( in red )
-		for (auto& c : circles)
+		for (auto& c: circles)
 		{
 //			cv::Point center(cvRound(c.h), cvRound(c.k));
 			int radius = cvRound(c->r);
@@ -172,7 +172,7 @@ namespace dayan
 		cv::Point center(cvRound(c->h), cvRound(c->k));
 		int radius = cvRound(c->r);
 		cv::circle(inputFrame, center, radius, cv::Scalar(0, 0, 255),
-			3, 8, 0);
+				3, 8, 0);
 	}
 
 	std::string matToString(const cv::Mat& mat, bool tab = false)
@@ -230,52 +230,27 @@ namespace dayan
 		fs.release();
 	}
 
-//	// Calculate the square root of a matrix.
-//	void sqrtMat(const cv::Mat& matrix, cv::Mat& sqrtMatrix)
-//	{
-//		cv::Mat eigenValues;
-//		cv::Mat eigenVectors;
-//		cv::eigen(matrix, eigenValues, eigenVectors);
-//		cv::sqrt(eigenValues, eigenValues);
-//		sqrtMatrix = eigenVectors * cv::Mat::diag(eigenValues) * eigenVectors.inv();
-//	}
-
-
-//	void sqrtMatMario(const cv::Mat& matrix, cv::Mat& cvMatrix)
-//	{
-//		std::cout << matrix << std::endl << std::endl;
-//
-//		// Convert a Mat into a Eigen matrix using the constructor.
-//		Eigen::MatrixXf sqrtCovMatrix(matrix.rows, matrix.cols);
-//
-//		// Pass data into the Eigen matrix.
-//		for (int i = 0; i < matrix.rows; i++)
-//			for (int j = 0; j < matrix.cols; j++)
-//				sqrtCovMatrix(i, j) = matrix.at<float>(i, j);
-//
-//		std::cout << sqrtCovMatrix << std::endl << std::endl;
-//
-//		// Calculate Cholesky decomposition.
-//		Eigen::LLT<Eigen::MatrixXf> lltOfA(sqrtCovMatrix);
-//
-//		Eigen::MatrixXf L;
-//		// Check if the decomposition was successful.
-//		if (lltOfA.info() == Eigen::Success)
-//		{
-//			// Obtain the lower triangular matrix L from the Cholesky decomposition.
-//			L = lltOfA.matrixL();
-//		}
-//		else
-//		{
-//			std::cerr << "Cholesky's decomposition was not successful." << std::endl;
-//		}
-//
-//// Convert a matrix from Eigen library to opencv.
-////		cvMatrix(L.rows(), L.cols(), CV_32F, L.data());
-//		cvMatrix = cv::Mat(L.rows(), L.cols(), CV_32F, L.data());
-//
-//		std::cout << cvMatrix << std::endl << std::endl;
-//	}
+	bool cholesky(const cv::Mat& mat, cv::Mat& cho)
+	{
+		int rows = mat.rows;
+		int cols = mat.cols;
+		if (rows != cols)
+		{
+			std::cout << "Error: Matrix is not square" << std::endl;
+			return false;
+		}
+		cv::Mat temp;
+		mat.copyTo(temp);
+		bool success = cv::Cholesky(temp.ptr<float>(), temp.step, rows, nullptr, 0, 0);
+//		bool success = cv::Cholesky(sqrtMatrix.ptr<float>(), sqrtMatrix.step1(), rows, nullptr, 0, cols);
+		if (!success)
+		{
+			std::cout << "Error: Cholesky failed" << std::endl;
+			return false;
+		}
+		cho = temp;
+		return true;
+	}
 }
 
 #endif //TOOLS_H
