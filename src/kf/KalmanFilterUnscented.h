@@ -7,8 +7,6 @@
 
 #include "opencv2/opencv.hpp"
 #include "KalmanFilter.h"
-//#include <opencv2/core/eigen.hpp>
-
 
 namespace dayan
 {
@@ -27,8 +25,7 @@ namespace dayan
 		float wc_0;
 		float w_i;
 
-		KalmanFilterUnscented(int n, int m)
-				: KalmanFilter(n, m)
+		KalmanFilterUnscented(int n, int m) : KalmanFilter(n, m)
 		{
 			_2n_1 = 2 * n + 1;
 			auto n_ = (float)n;
@@ -46,27 +43,21 @@ namespace dayan
 
 		void correct() override
 		{
-
 			cv::Mat sqrtP;
 			bool success = dayan::cholesky(Pp, sqrtP);
 			if (!success)
 			{
-				std::cout << "Error: Cholesky failed" << std::endl;
 				X = Xp;
 				P = Pp;
 				return;
 			}
-
-//			cv::sqrt(Pp, sqrtP);
-//			dayan::sqrtMat(Pp, sqrtP);
-//			dayan::sqrtMatMario(Pp, sqrtP);
-//			dayan::printMat(sqrtP, "Pp_sqrt_test1");
 			// Generación de los puntos sigma
 			cv::Mat arrayX[_2n_1];
 			cv::Mat mu = Xp;
 			arrayX[0] = mu;
 			for (int i = 1; i <= n; i++)
 			{
+//				cv::Mat sqrtP_i = sqrtP.row(i - 1).t();
 				cv::Mat sqrtP_i = sqrtP.col(i - 1);
 				cv::Mat lambdaXsqrtP_i = lambda * sqrtP_i;
 				arrayX[i] = mu + lambdaXsqrtP_i;
@@ -88,13 +79,13 @@ namespace dayan
 
 			cv::Mat Xdiff = arrayX[0] - mu;
 			cv::Mat Zdiff = arrayZ[0] - Zmean;
-			cv::Mat Smean = wc_0 * (Zdiff * Zdiff.t()) + R;
+			cv::Mat Smean = wc_0 * (Zdiff * Zdiff.t());
 			cv::Mat Pmean = wc_0 * (Xdiff * Zdiff.t());
 			for (int i = 1; i < _2n_1; i++)
 			{
 				Xdiff = arrayX[i] - mu;
 				Zdiff = arrayZ[i] - Zmean;
-				Smean += w_i * (Zdiff * Zdiff.t()) + R;
+				Smean += w_i * (Zdiff * Zdiff.t());
 				Pmean += w_i * (Xdiff * Zdiff.t());
 			}
 

@@ -236,7 +236,7 @@ namespace dayan
 		int cols = mat.cols;
 		if (rows != cols)
 		{
-			std::cout << "Error: Matrix is not square" << std::endl;
+			std::cout << "\033[31m" << "Error: Matrix is not square" << "\033[0m" << std::endl;
 			return false;
 		}
 		cv::Mat temp;
@@ -245,7 +245,7 @@ namespace dayan
 //		bool success = cv::Cholesky(sqrtMatrix.ptr<float>(), sqrtMatrix.step1(), rows, nullptr, 0, cols);
 		if (!success)
 		{
-			std::cout << "Error: Cholesky failed" << std::endl;
+			std::cout << "\033[31m" << "Error: Cholesky failed" << "\033[0m" << std::endl;
 			return false;
 		}
 		cho = temp;

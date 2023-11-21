@@ -58,11 +58,11 @@ int main(int argc, char** argv)
 	int lSlidePos = 16;
 	arturo::barData umLuz(100. / SLIDE_MAX, 0);
 	cv::createTrackbar("umLuz",
-		inputWinName,
-		&lSlidePos,
-		SLIDE_MAX,
-		arturo::umLuzChange,
-		(void*)&umLuz);
+			inputWinName,
+			&lSlidePos,
+			SLIDE_MAX,
+			arturo::umLuzChange,
+			(void*)&umLuz);
 	arturo::umLuzChange(0, (void*)&umLuz);
 	// Slide 3 (error permitido)
 	int error = 5;
@@ -72,6 +72,7 @@ int main(int argc, char** argv)
 	cv::createTrackbar("Contour Point Count Min", inputWinName, &contourPointMinCount, 100);
 
 	cv::Mat inputFrame, inputFrameLab, mask, mean, iCov;
+	cv::Mat inputFrame0;
 
 	int dt = 0;
 	int frameCount = -1;
@@ -79,7 +80,16 @@ int main(int argc, char** argv)
 	{
 		std::cout << "\033[1;32m" << "Frame: " << ++frameCount << "\033[0m" << std::endl;
 		// We capture an image, and validate that the operation worked.
-		config->video >> inputFrame;
+			config->video >> inputFrame;
+//		if (0 == frameCount)
+//		{
+//			config->video >> inputFrame;
+//			inputFrame.copyTo(inputFrame0);
+//		}
+//		else{
+//			inputFrame0.copyTo(inputFrame);
+//		}
+
 		if (inputFrame.empty())
 			break;
 
@@ -105,18 +115,18 @@ int main(int argc, char** argv)
 		//		std::cout << "\033[1;32m" << "umDistVal: " << umDist.val << "\033[0m" << std::endl;
 		//		std::cout << "\033[1;32m" << "umLuz.val: " << umLuz.val << "\033[0m" << std::endl;
 		dayan::makeMeasurement(
-			inputFrameLab,
-			mask,
-			mean,
-			iCov,
-			50,
-			//umDist.val,
-			umLuz.val,
-			contourPointMinCount,
-			error,
-			c,
-			kalmanFilter->Z,
-			dt
+				inputFrameLab,
+				mask,
+				mean,
+				iCov,
+				60,
+				//umDist.val,
+				umLuz.val,
+				contourPointMinCount,
+				error,
+				c,
+				kalmanFilter->Z,
+				dt
 		);
 		if (nullptr == c)
 		{
