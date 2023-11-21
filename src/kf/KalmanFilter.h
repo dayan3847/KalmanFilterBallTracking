@@ -39,6 +39,17 @@ namespace dayan
 
 		cv::Mat I; //!< identity matrix
 
+		// catidad de parametros del estado
+		int n;
+		// catidad de parametros de la medida
+		int m;
+
+		KalmanFilter(int n, int m)
+		{
+			this->n = n;
+			this->m = m;
+		}
+
 		void predict(const int& dt)
 		{
 			this->update_A(dt);
@@ -61,6 +72,11 @@ namespace dayan
 	protected:
 		virtual void update_A(const int& dt)
 		{
+		}
+		// Actualiza h y sus jacobianos (H y J[si es implicito])
+		virtual void update_h_jacobians()
+		{
+
 		}
 	};
 

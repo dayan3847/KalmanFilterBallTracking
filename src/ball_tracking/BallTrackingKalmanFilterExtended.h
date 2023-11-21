@@ -7,6 +7,7 @@
 
 #include "opencv2/opencv.hpp"
 #include "../tools/Config.h"
+#include "../kf/KalmanFilter.h"
 #include "../kf/KalmanFilterExtended.h"
 
 namespace dayan
@@ -17,6 +18,7 @@ namespace dayan
 	public:
 		// Constructor
 		BallTrackingKalmanFilterExtended()
+			: KalmanFilterExtended(6, 5)
 		{
 			Q = (cv::Mat_<float>(6, 6)
 				<<

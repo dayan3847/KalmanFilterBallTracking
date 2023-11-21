@@ -12,6 +12,7 @@ namespace dayan
 	{
 		Extended,
 		ExtendedImplicit,
+		Unscented,
 	};
 
 } // dayan

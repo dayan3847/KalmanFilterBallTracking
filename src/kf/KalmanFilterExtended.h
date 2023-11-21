@@ -10,11 +10,14 @@
 
 namespace dayan
 {
-
 	// Extended Kalman Filter
 	class KalmanFilterExtended : public KalmanFilter
 	{
 	public:
+		KalmanFilterExtended(int n, int m)
+			: KalmanFilter(n, m)
+		{
+		}
 		void correct() override
 		{
 			this->update_h_jacobians();
@@ -23,11 +26,6 @@ namespace dayan
 			P = (I - K * H) * Pp;
 		}
 	protected:
-		// Actualiza h y sus jacobianos (H y J[si es implicito])
-		virtual void update_h_jacobians()
-		{
-
-		}
 		// Actualiza K
 		void update_K()
 		{

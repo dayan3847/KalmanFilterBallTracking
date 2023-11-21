@@ -13,6 +13,10 @@ namespace dayan
 	class KalmanFilterExtendedImplicit : public KalmanFilterExtended
 	{
 	public:
+		KalmanFilterExtendedImplicit(int n, int m)
+			: KalmanFilterExtended(n, m)
+		{
+		}
 		cv::Mat J; //!< Jacobian matrix h respecto a Z
 
 		void correct() override

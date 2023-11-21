@@ -10,13 +10,14 @@
 #include "src/kf/KalmanFilterType.h"
 #include "src/ball_tracking/BallTrackingKalmanFilterExtended.h"
 #include "src/ball_tracking/BallTrackingKalmanFilterExtendedImplicit.h"
+#include "src/ball_tracking/BallTrackingKalmanFilterUnscented.h"
 
 int main(int argc, char** argv)
 {
 	std::string data_path = argc < 2 ? "ball_tennis" : argv[1];
 	dayan::KalmanFilterType kfType = argc < 3
-		                                 ? dayan::KalmanFilterType::Extended
-		                                 : (dayan::KalmanFilterType)atoi(argv[2]);
+									 ? dayan::KalmanFilterType::Unscented
+									 : (dayan::KalmanFilterType)atoi(argv[2]);
 	auto config = dayan::Config::getInstance(data_path);
 
 	std::string inputWinName = "Input";
@@ -33,6 +34,10 @@ int main(int argc, char** argv)
 	case dayan::KalmanFilterType::ExtendedImplicit:
 		kalmanFilter = new dayan::BallTrackingKalmanFilterExtendedImplicit();
 		inputWinName = "Implicit Extended Kalman Filter";
+		break;
+	case dayan::KalmanFilterType::Unscented:
+		kalmanFilter = new dayan::BallTrackingKalmanFilterUnscented();
+		inputWinName = "Unscented Kalman Filter";
 		break;
 	default:
 		std::cout << "\033[1;31m" << "KalmanFilterType not supported" << "\033[0m" << std::endl;
@@ -150,8 +155,7 @@ int main(int argc, char** argv)
 		dt = 0;
 		// If the user presses a key, the cycle ends.
 		//		break;
-	}
-	while (cv::waitKeyEx(30) < 0);
+	} while (cv::waitKeyEx(30) < 0);
 
 	imwrite("./data/" + data_path + "/LastFrame.png", inputFrame);
 

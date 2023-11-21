@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(OpenCV_FOUND 1)
 find_package(OpenCV REQUIRED)
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
 set(
         SOURCE_FILES
@@ -20,7 +21,9 @@ set(
         src/kf/KalmanFilterExtendedImplicit.h
         src/ball_tracking/BallTrackingKalmanFilterExtended.h
         src/ball_tracking/BallTrackingKalmanFilterExtendedImplicit.h
+        src/kf/KalmanFilterUnscented.h
+        src/ball_tracking/BallTrackingKalmanFilterUnscented.h
 )
 
 add_executable(KalmanFilterBallTracking kalman_filter_ball_tracking.cpp ${SOURCE_FILES})
-target_link_libraries(KalmanFilterBallTracking ${OpenCV_LIBS})
+target_link_libraries(KalmanFilterBallTracking ${OpenCV_LIBS} Eigen3::Eigen)

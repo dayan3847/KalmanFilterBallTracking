@@ -15,8 +15,8 @@ namespace dayan
 	class BallTrackingKalmanFilterExtendedImplicit : public KalmanFilterExtendedImplicit
 	{
 	public:
-		// Constructor
 		BallTrackingKalmanFilterExtendedImplicit()
+			: KalmanFilterExtendedImplicit(6, 5)
 		{
 			Q = (cv::Mat_<float>(6, 6)
 				<<

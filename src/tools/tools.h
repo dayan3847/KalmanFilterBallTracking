@@ -11,6 +11,10 @@
 #include "opencv2/opencv.hpp"
 #include <fstream>
 
+//#include <cstdio>
+//#include <cmath>
+#include <Eigen/Dense>
+
 namespace dayan
 {
 //	// Matriz de calibracion
@@ -224,6 +228,53 @@ namespace dayan
 
 		fs["matrix"] >> matrix;
 		fs.release();
+	}
+
+	// Calculate the square root of a matrix.
+	void sqrtMat(const cv::Mat& matrix, cv::Mat& sqrtMatrix)
+	{
+		cv::Mat eigenValues;
+		cv::Mat eigenVectors;
+		cv::eigen(matrix, eigenValues, eigenVectors);
+		cv::sqrt(eigenValues, eigenValues);
+		sqrtMatrix = eigenVectors * cv::Mat::diag(eigenValues) * eigenVectors.inv();
+	}
+
+
+	void sqrtMatMario(const cv::Mat& matrix, cv::Mat& cvMatrix)
+	{
+		std::cout << matrix << std::endl << std::endl;
+
+		// Convert a Mat into a Eigen matrix using the constructor.
+		Eigen::MatrixXf sqrtCovMatrix(matrix.rows, matrix.cols);
+
+		// Pass data into the Eigen matrix.
+		for (int i = 0; i < matrix.rows; i++)
+			for (int j = 0; j < matrix.cols; j++)
+				sqrtCovMatrix(i, j) = matrix.at<float>(i, j);
+
+		std::cout << sqrtCovMatrix << std::endl << std::endl;
+
+		// Calculate Cholesky decomposition.
+		Eigen::LLT<Eigen::MatrixXf> lltOfA(sqrtCovMatrix);
+
+		Eigen::MatrixXf L;
+		// Check if the decomposition was successful.
+		if (lltOfA.info() == Eigen::Success)
+		{
+			// Obtain the lower triangular matrix L from the Cholesky decomposition.
+			L = lltOfA.matrixL();
+		}
+		else
+		{
+			std::cerr << "Cholesky's decomposition was not successful." << std::endl;
+		}
+
+// Convert a matrix from Eigen library to opencv.
+//		cvMatrix(L.rows(), L.cols(), CV_32F, L.data());
+		cvMatrix = cv::Mat(L.rows(), L.cols(), CV_32F, L.data());
+
+		std::cout << cvMatrix << std::endl << std::endl;
 	}
 }
 
