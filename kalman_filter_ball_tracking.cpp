@@ -16,7 +16,7 @@ int main(int argc, char** argv)
 {
 	std::string data_path = argc < 2 ? "ball_tennis" : argv[1];
 	dayan::KalmanFilterType kfType = argc < 3
-									 ? dayan::KalmanFilterType::Unscented
+									 ? dayan::KalmanFilterType::Extended
 									 : (dayan::KalmanFilterType)atoi(argv[2]);
 	auto config = dayan::Config::getInstance(data_path);
 
@@ -80,7 +80,7 @@ int main(int argc, char** argv)
 	{
 		std::cout << "\033[1;32m" << "Frame: " << ++frameCount << "\033[0m" << std::endl;
 		// We capture an image, and validate that the operation worked.
-			config->video >> inputFrame;
+		config->video >> inputFrame;
 //		if (0 == frameCount)
 //		{
 //			config->video >> inputFrame;
@@ -128,11 +128,22 @@ int main(int argc, char** argv)
 				kalmanFilter->Z,
 				dt
 		);
-		if (nullptr == c)
-		{
-			std::cout << "\033[1;31m" << "No se encontro el circulo" << "\033[0m" << std::endl;
-			continue;
-		}
+//		dayan::printMat(kalmanFilter->Z, "Z");
+		// Test static Z
+//		kalmanFilter->Z = (cv::Mat_<float>(5, 1)
+//				<<
+//				-0.0489238,
+//				-0.0344612,
+//				0.,//3.71203e-05,
+//				0.,//0.000135066,
+//				0.054867
+//		);
+
+//		if (nullptr == c)
+//		{
+//			std::cout << "\033[1;31m" << "No se encontro el circulo" << "\033[0m" << std::endl;
+//			continue;
+//		}
 		//dayan::printMat(Z, "Z");
 		//dayan::drawCircle(inputFrame, c);
 		dayan::drawCircleByZ(inputFrame, kalmanFilter->Z, cv::Scalar(255, 0, 0));
@@ -154,7 +165,7 @@ int main(int argc, char** argv)
 		}
 
 		// Show images
-		imshow(maskWinName, mask);
+//		imshow(maskWinName, mask);
 		imshow(inputWinName, inputFrame);
 
 		//std::cout << "error permitido: " << error << std::endl;

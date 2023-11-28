@@ -55,6 +55,13 @@ namespace dayan
 			this->update_A(dt);
 			Xp = A * X;
 			Pp = A * P * A.t() + Q;
+			if (Pp.at<float>(0) < 0)
+			{
+				dayan::printMat(Pp, "Pp");
+				dayan::printMat(A, "A");
+				dayan::printMat(P, "P");
+				dayan::printMat(Q, "Q");
+			}
 		}
 
 		virtual void correct()
@@ -66,13 +73,16 @@ namespace dayan
 			this->predict(dt);
 			this->correct();
 		}
+
 		virtual void init_X()
 		{
 		}
+
 	protected:
 		virtual void update_A(const int& dt)
 		{
 		}
+
 		// Actualiza h y sus jacobianos (H y J[si es implicito])
 		virtual void update_h_jacobians()
 		{

@@ -45,21 +45,21 @@ namespace dayan
 		{
 			cv::Mat sqrtP;
 			bool success = dayan::cholesky(Pp, sqrtP);
+
 			if (!success)
 			{
-				X = Xp;
-				P = Pp;
-				return;
+				dayan::printMat(Pp);
+				exit(1);
 			}
 			// Generación de los puntos sigma
 			cv::Mat arrayX[_2n_1];
-			cv::Mat mu = Xp;
+			cv::Mat mu;
+			Xp.copyTo(mu);
 			arrayX[0] = mu;
 			for (int i = 1; i <= n; i++)
 			{
-//				cv::Mat sqrtP_i = sqrtP.row(i - 1).t();
 				cv::Mat sqrtP_i = sqrtP.col(i - 1);
-				cv::Mat lambdaXsqrtP_i = lambda * sqrtP_i;
+				cv::Mat lambdaXsqrtP_i = theta * sqrtP_i;
 				arrayX[i] = mu + lambdaXsqrtP_i;
 				arrayX[i + n] = mu - lambdaXsqrtP_i;
 			}
@@ -79,20 +79,38 @@ namespace dayan
 
 			cv::Mat Xdiff = arrayX[0] - mu;
 			cv::Mat Zdiff = arrayZ[0] - Zmean;
-			cv::Mat Smean = wc_0 * (Zdiff * Zdiff.t());
-			cv::Mat Pmean = wc_0 * (Xdiff * Zdiff.t());
+			cv::Mat Zdiff_t = Zdiff.t();
+			cv::Mat Smean = wc_0 * (Zdiff * Zdiff_t);
+			cv::Mat Pmean = wc_0 * (Xdiff * Zdiff_t);
 			for (int i = 1; i < _2n_1; i++)
 			{
 				Xdiff = arrayX[i] - mu;
 				Zdiff = arrayZ[i] - Zmean;
-				Smean += w_i * (Zdiff * Zdiff.t());
-				Pmean += w_i * (Xdiff * Zdiff.t());
+				Zdiff_t = Zdiff.t();
+				Smean += w_i * (Zdiff * Zdiff_t);
+				Pmean += w_i * (Xdiff * Zdiff_t);
 			}
+			Smean += R;
 
 			K = Pmean * Smean.inv();
 
 			X = Xp + K * (Z - Zmean);
-			P = Pp - K * Smean * K.t();
+			P = Pp - (K * Smean * K.t());
+			if (P.at<float>(0) < 0)
+			{
+				dayan::printMat(P, "P");
+				dayan::printMat(Pp, "Pp");
+				dayan::printMat(K, "K");
+				dayan::printMat(Smean, "Smean");
+				dayan::printMat(Zmean, "Zmean");
+				dayan::printMat(Z, "Z");
+				dayan::printMat(Xp, "Xp");
+				dayan::printMat(X, "X");
+				dayan::printMat(mu, "mu");
+				dayan::printMat(A, "A");
+				dayan::printMat(R, "R");
+				dayan::printMat(Q, "Q");
+			}
 		}
 
 	protected:

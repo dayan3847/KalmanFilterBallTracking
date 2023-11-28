@@ -19,32 +19,9 @@ namespace dayan
 		BallTrackingKalmanFilterUnscented()
 			: KalmanFilterUnscented(6, 5)
 		{
-			Q = (cv::Mat_<float>(6, 6)
-				<<
-				1e-4, 0, 0, 0, 0, 0,
-				0, 1e-4, 0, 0, 0, 0,
-				0, 0, 1e-4, 0, 0, 0,
-				0, 0, 0, 1e-4, 0, 0,
-				0, 0, 0, 0, 1e-4, 0,
-				0, 0, 0, 0, 0, 1e-4
-			);
-			R = (cv::Mat_<float>(5, 5)
-				<<
-				1, 0, 0, 0, 0,
-				0, 1, 0, 0, 0,
-				0, 0, 1, 0, 0,
-				0, 0, 0, 1, 0,
-				0, 0, 0, 0, 1
-			);
-			P = (cv::Mat_<float>(6, 6)
-				<<
-				.1, 0, 0, 0, 0, 0,
-				0, .1, 0, 0, 0, 0,
-				0, 0, .1, 0, 0, 0,
-				0, 0, 0, .1, 0, 0,
-				0, 0, 0, 0, .1, 0,
-				0, 0, 0, 0, 0, .1
-			);
+			Q = 1e-6 * cv::Mat::eye(6, 6, CV_32F);
+			R = 1 * cv::Mat::eye(5, 5, CV_32F);
+			P = 1 * cv::Mat::eye(6, 6, CV_32F);
 			I = cv::Mat::eye(6, 6, CV_32F);
 		}
 		// Inicializa el primer estado a partir de la primera medida
@@ -73,11 +50,12 @@ namespace dayan
 		// Update Matrix A
 		void update_A(const int& dt) override
 		{
+			auto dts = (float)dt / 1000;
 			A = (cv::Mat_<float>(6, 6)
 				<<
-				1, 0, 0, dt, 0, 0,
-				0, 1, 0, 0, dt, 0,
-				0, 0, 1, 0, 0, dt,
+				1, 0, 0, dts, 0, 0,
+				0, 1, 0, 0, dts, 0,
+				0, 0, 1, 0, 0, dts,
 				0, 0, 0, 1, 0, 0,
 				0, 0, 0, 0, 1, 0,
 				0, 0, 0, 0, 0, 1

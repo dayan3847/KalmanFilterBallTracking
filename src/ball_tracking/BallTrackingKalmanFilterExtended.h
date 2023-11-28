@@ -18,33 +18,33 @@ namespace dayan
 	public:
 		// Constructor
 		BallTrackingKalmanFilterExtended()
-			: KalmanFilterExtended(6, 5)
+				: KalmanFilterExtended(6, 5)
 		{
 			Q = (cv::Mat_<float>(6, 6)
-				<<
-				1e-4, 0, 0, 0, 0, 0,
-				0, 1e-4, 0, 0, 0, 0,
-				0, 0, 1e-4, 0, 0, 0,
-				0, 0, 0, 1e-4, 0, 0,
-				0, 0, 0, 0, 1e-4, 0,
-				0, 0, 0, 0, 0, 1e-4
+					<<
+					1e-4, 0, 0, 0, 0, 0,
+					0, 1e-4, 0, 0, 0, 0,
+					0, 0, 1e-4, 0, 0, 0,
+					0, 0, 0, 1e-4, 0, 0,
+					0, 0, 0, 0, 1e-4, 0,
+					0, 0, 0, 0, 0, 1e-4
 			);
 			R = (cv::Mat_<float>(5, 5)
-				<<
-				10, 0, 0, 0, 0,
-				0, 10, 0, 0, 0,
-				0, 0, 10, 0, 0,
-				0, 0, 0, 10, 0,
-				0, 0, 0, 0, 10
+					<<
+					10, 0, 0, 0, 0,
+					0, 10, 0, 0, 0,
+					0, 0, 10, 0, 0,
+					0, 0, 0, 10, 0,
+					0, 0, 0, 0, 10
 			);
 			P = (cv::Mat_<float>(6, 6)
-				<<
-				.1, 0, 0, 0, 0, 0,
-				0, .1, 0, 0, 0, 0,
-				0, 0, .1, 0, 0, 0,
-				0, 0, 0, .1, 0, 0,
-				0, 0, 0, 0, .1, 0,
-				0, 0, 0, 0, 0, .1
+					<<
+					.1, 0, 0, 0, 0, 0,
+					0, .1, 0, 0, 0, 0,
+					0, 0, .1, 0, 0, 0,
+					0, 0, 0, .1, 0, 0,
+					0, 0, 0, 0, .1, 0,
+					0, 0, 0, 0, 0, .1
 			);
 			I = cv::Mat::eye(6, 6, CV_32F);
 		}
@@ -63,28 +63,30 @@ namespace dayan
 			auto Y = y * Z;
 
 			this->X = (cv::Mat_<float>(6, 1)
-				<<
-				X,
-				Y,
-				Z,
-				0,
-				0,
-				0
+					<<
+					X,
+					Y,
+					Z,
+					0,
+					0,
+					0
 			);
 		}
+
 		// Update Matrix A
 		void update_A(const int& dt) override
 		{
 			A = (cv::Mat_<float>(6, 6)
-				<<
-				1, 0, 0, dt, 0, 0,
-				0, 1, 0, 0, dt, 0,
-				0, 0, 1, 0, 0, dt,
-				0, 0, 0, 1, 0, 0,
-				0, 0, 0, 0, 1, 0,
-				0, 0, 0, 0, 0, 1
+					<<
+					1, 0, 0, dt, 0, 0,
+					0, 1, 0, 0, dt, 0,
+					0, 0, 1, 0, 0, dt,
+					0, 0, 0, 1, 0, 0,
+					0, 0, 0, 0, 1, 0,
+					0, 0, 0, 0, 0, 1
 			);
 		}
+
 	protected:
 		void update_h_jacobians() override
 		{
@@ -97,24 +99,25 @@ namespace dayan
 			float Yp = this->Xp.at<float>(4);
 			float Zp = this->Xp.at<float>(5);
 
-			h = (cv::Mat_<float>(5, 1)
-				<<
-				X / Z,
-				Y / Z,
-				(Xp + (X / Z) * Zp) / Z,
-				(Yp + (Y / Z) * Zp) / Z,
-				config->radio / Z
-			);
 			auto Z2 = Z * Z;
+
+			h = (cv::Mat_<float>(5, 1)
+					<<
+					X / Z,
+					Y / Z,
+					-X * Zp / Z2 + Xp / Z,
+					-Y * Zp / Z2 + Yp / Z,
+					config->radio / Z
+			);
 			auto Z3 = Z2 * Z;
-			auto Zp_Z2 = Zp / Z2;
+			auto _Zp_Z2 = -Zp / Z2;
 			H = (cv::Mat_<float>(5, 6)
-				<<
-				1 / Z, 0, -X / Z2, 0, 0, 0,
-				0, 1 / Z, -Y / Z2, 0, 0, 0,
-				Zp_Z2, 0, Xp / Z2 - 2 * (X * Zp + Z * Xp) / Z3, 1 / Z, 0, X / Z2,
-				0, Zp_Z2, Yp / Z2 - 2 * (Y * Zp + Z * Yp) / Z3, 0, 1 / Z, Y / Z2,
-				0, 0, -config->radio / Z2, 0, 0, 0
+					<<
+					1 / Z, 0, -X / Z2, 0, 0, 0,
+					0, 1 / Z, -Y / Z2, 0, 0, 0,
+					_Zp_Z2, 0, 2 * X * Zp / Z3 - Xp / Z2, 1 / Z, 0, -X / Z2,
+					0, _Zp_Z2, 2 * Y * Zp / Z3 - Yp / Z2, 0, 1 / Z, -Y / Z2,
+					0, 0, -config->radio / Z2, 0, 0, 0
 			);
 		}
 	};
