@@ -16,34 +16,11 @@ namespace dayan
 	{
 	public:
 		BallTrackingKalmanFilterExtendedImplicit()
-				: KalmanFilterExtendedImplicit(6, 5)
+			: KalmanFilterExtendedImplicit(6, 5)
 		{
-			Q = (cv::Mat_<float>(6, 6)
-					<<
-					1e-4, 0, 0, 0, 0, 0,
-					0, 1e-4, 0, 0, 0, 0,
-					0, 0, 1e-4, 0, 0, 0,
-					0, 0, 0, 1e-4, 0, 0,
-					0, 0, 0, 0, 1e-4, 0,
-					0, 0, 0, 0, 0, 1e-4
-			);
-			R = (cv::Mat_<float>(5, 5)
-					<<
-					10, 0, 0, 0, 0,
-					0, 10, 0, 0, 0,
-					0, 0, 10, 0, 0,
-					0, 0, 0, 10, 0,
-					0, 0, 0, 0, 10
-			);
-			P = (cv::Mat_<float>(6, 6)
-					<<
-					.1, 0, 0, 0, 0, 0,
-					0, .1, 0, 0, 0, 0,
-					0, 0, .1, 0, 0, 0,
-					0, 0, 0, .1, 0, 0,
-					0, 0, 0, 0, .1, 0,
-					0, 0, 0, 0, 0, .1
-			);
+			Q = 1e-4 * cv::Mat::eye(n, n, CV_32F);
+			R = 1 * cv::Mat::eye(m, m, CV_32F);
+			P = 1 * cv::Mat::eye(n, n, CV_32F);
 		}
 
 		// Inicializa el primer estado a partir de la primera medida
@@ -53,20 +30,20 @@ namespace dayan
 
 			auto x = this->Z.at<float>(0);
 			auto y = this->Z.at<float>(1);
-			auto r = this->Z.at<float>(4);
+			auto r = this->Z.at<float>(2);
 
 			auto Z = config->radio / r;
 			auto X = x * Z;
 			auto Y = y * Z;
 
 			this->X = (cv::Mat_<float>(6, 1)
-					<<
-					X,
-					Y,
-					Z,
-					0,
-					0,
-					0
+				<<
+				X,
+				Y,
+				Z,
+				0,
+				0,
+				0
 			);
 		}
 
@@ -74,13 +51,13 @@ namespace dayan
 		void update_A(const int& dt) override
 		{
 			A = (cv::Mat_<float>(6, 6)
-					<<
-					1, 0, 0, dt, 0, 0,
-					0, 1, 0, 0, dt, 0,
-					0, 0, 1, 0, 0, dt,
-					0, 0, 0, 1, 0, 0,
-					0, 0, 0, 0, 1, 0,
-					0, 0, 0, 0, 0, 1
+				<<
+				1, 0, 0, dt, 0, 0,
+				0, 1, 0, 0, dt, 0,
+				0, 0, 1, 0, 0, dt,
+				0, 0, 0, 1, 0, 0,
+				0, 0, 0, 0, 1, 0,
+				0, 0, 0, 0, 0, 1
 			);
 		}
 
@@ -89,46 +66,48 @@ namespace dayan
 		{
 			auto config = dayan::Config::getInstance();
 
-			float X = this->Xp.at<float>(0);
-			float Y = this->Xp.at<float>(1);
-			float Z = this->Xp.at<float>(2);
-			float Xp = this->Xp.at<float>(3);
-			float Yp = this->Xp.at<float>(4);
-			float Zp = this->Xp.at<float>(5);
+			auto X = this->Xp.at<float>(0);
+			auto Y = this->Xp.at<float>(1);
+			auto Z = this->Xp.at<float>(2);
+			auto dX = this->Xp.at<float>(3);
+			auto dY = this->Xp.at<float>(4);
+			auto dZ = this->Xp.at<float>(5);
 
 			auto x = this->Z.at<float>(0);
 			auto y = this->Z.at<float>(1);
-			auto xp = this->Z.at<float>(2);
-			auto yp = this->Z.at<float>(3);
-			auto r = this->Z.at<float>(4);
+			auto r = this->Z.at<float>(2);
+			auto dx = this->Z.at<float>(3);
+			auto dy = this->Z.at<float>(4);
+
+			auto Rm = config->radio;
 
 			auto Z2 = Z * Z;
+			auto dZ_Z = dZ / Z;
 
-			h = (cv::Mat_<float>(5, 1)
-					<<
-					x - X / Z,
-					y - Y / Z,
-					xp - (-X * Zp / Z2 + Xp / Z),
-					yp - (-Y * Zp / Z2 + Yp / Z),
-					r - config->radio / Z
+			h = (cv::Mat_<float>(m, 1)
+				<<
+				-X / Z + x,
+				-Y / Z + y,
+				-Rm / Z + r,
+				dx - dX / Z + dZ * x / Z,
+				dy - dY / Z + dZ * y / Z
 			);
-			auto _1_Z = -1 / Z;
-			H = (cv::Mat_<float>(5, 6)
-					<<
-					_1_Z, 0, X / Z2, 0, 0, 0,
-					0, _1_Z, Y / Z2, 0, 0, 0,
-					0, 0, (Xp + x * Zp) / Z2, _1_Z, 0, -x / Z,
-					0, 0, (Yp + y * Zp) / Z2, 0, _1_Z, -y / Z,
-					0, 0, config->radio / Z2, 0, 0, 0
+
+			H = (cv::Mat_<float>(m, n)
+				<<
+				-1 / Z, 0, X / Z2, 0, 0, 0,
+				0, -1 / Z, Y / Z2, 0, 0, 0,
+				0, 0, Rm / Z2, 0, 0, 0,
+				0, 0, dX / Z2 - dZ * x / Z2, -1 / Z, 0, x / Z,
+				0, 0, dY / Z2 - dZ * y / Z2, 0, -1 / Z, y / Z
 			);
-			auto Zp_Z = -Zp / Z;
-			J = (cv::Mat_<float>(5, 5)
-					<<
-					1, 0, 0, 0, 0,
-					0, 1, 0, 0, 0,
-					Zp_Z, 0, 1, 0, 0,
-					0, Zp_Z, 0, 1, 0,
-					0, 0, 0, 0, 1
+			J = (cv::Mat_<float>(m, m)
+				<<
+				1, 0, 0, 0, 0,
+				0, 1, 0, 0, 0,
+				0, 0, 1, 0, 0,
+				dZ_Z, 0, 0, 1, 0,
+				0, dZ_Z, 0, 0, 1
 			);
 		}
 	};
