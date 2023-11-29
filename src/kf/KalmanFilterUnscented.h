@@ -26,7 +26,7 @@ namespace dayan
 		float w_i;
 
 		KalmanFilterUnscented(int n, int m)
-			: KalmanFilter(n, m)
+				: KalmanFilter(n, m)
 		{
 			_2n_1 = 2 * n + 1;
 			auto n_ = (float)n;
@@ -42,7 +42,7 @@ namespace dayan
 			w_i = 1 / (2 * (n_ + lambda));
 		}
 
-		void predict_correct(const int& dt) override
+		void predict_correct(const float& dt) override
 		{
 			this->update_A(dt);
 			Xp = A * X;

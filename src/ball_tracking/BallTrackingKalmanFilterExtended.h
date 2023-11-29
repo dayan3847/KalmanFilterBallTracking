@@ -50,7 +50,7 @@ namespace dayan
 		}
 
 		// Update Matrix A
-		void update_A(const int& dt) override
+		void update_A(const float& dt) override
 		{
 			A = (cv::Mat_<float>(n, n)
 				<<

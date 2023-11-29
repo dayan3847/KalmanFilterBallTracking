@@ -19,7 +19,7 @@ int main(int argc, char** argv)
 {
 	std::string data_path = argc < 2 ? "ball_tennis" : argv[1];
 	dayan::KalmanFilterType kfType = argc < 3
-									 ? dayan::KalmanFilterType::Extended_6x6
+									 ? dayan::KalmanFilterType::Extended_9x8
 									 : (dayan::KalmanFilterType)atoi(argv[2]);
 	auto config = dayan::Config::getInstance(data_path);
 

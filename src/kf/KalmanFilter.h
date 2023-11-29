@@ -51,7 +51,7 @@ namespace dayan
 			Z = cv::Mat::zeros(m, 1, CV_32F);
 		}
 
-		void predict(const int& dt)
+		void predict(const float& dt)
 		{
 			this->update_A(dt);
 			Xp = A * X;
@@ -69,7 +69,7 @@ namespace dayan
 		{
 		}
 
-		virtual void predict_correct(const int& dt)
+		virtual void predict_correct(const float& dt)
 		{
 			this->predict(dt);
 			this->correct();
@@ -80,7 +80,7 @@ namespace dayan
 		}
 
 	protected:
-		virtual void update_A(const int& dt)
+		virtual void update_A(const float& dt)
 		{
 		}
 

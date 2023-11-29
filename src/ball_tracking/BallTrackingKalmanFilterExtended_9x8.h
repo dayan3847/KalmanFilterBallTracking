@@ -13,7 +13,7 @@
 namespace dayan
 {
 
-	class BallTrackingKalmanFilterExtended_9x8: public KalmanFilterExtended
+	class BallTrackingKalmanFilterExtended_9x8 : public KalmanFilterExtended
 	{
 
 	public:
@@ -54,7 +54,7 @@ namespace dayan
 		}
 
 		// Update Matrix A
-		void update_A(const int& dt) override
+		void update_A(const float& dt) override
 		{
 			auto dt2_2 = dt * dt / 2;
 
@@ -65,7 +65,10 @@ namespace dayan
 					0, 0, 1, 0, 0, dt, 0, 0, dt2_2,
 					0, 0, 0, 1, 0, 0, dt, 0, 0,
 					0, 0, 0, 0, 1, 0, 0, dt, 0,
-					0, 0, 0, 0, 0, 1, 0, 0, dt
+					0, 0, 0, 0, 0, 1, 0, 0, dt,
+					0, 0, 0, 0, 0, 0, 1, 0, 0,
+					0, 0, 0, 0, 0, 0, 0, 1, 0,
+					0, 0, 0, 0, 0, 0, 0, 0, 1
 			);
 		}
 
