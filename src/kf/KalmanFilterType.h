@@ -11,11 +11,11 @@ namespace dayan
 	enum KalmanFilterType
 	{
 		Extended_6x5,
+		ExtendedImplicit_6x5,
+		Unscented,
 		Extended_6x6,
 		Extended_9x8,
 		Extended_9x9,
-		ExtendedImplicit_6x5,
-		Unscented,
 	};
 
 } // dayan

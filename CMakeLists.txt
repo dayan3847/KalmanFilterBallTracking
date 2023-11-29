@@ -25,6 +25,7 @@ set(
         src/ball_tracking/BallTrackingKalmanFilterUnscented.h
         src/ball_tracking/BallTrackingKalmanFilterExtended_6x6.h
         src/ball_tracking/BallTrackingKalmanFilterExtended_9x8.h
+        src/ball_tracking/BallTrackingKalmanFilterExtended_9x9.h
 )
 
 add_executable(KalmanFilterBallTracking kalman_filter_ball_tracking.cpp ${SOURCE_FILES})
