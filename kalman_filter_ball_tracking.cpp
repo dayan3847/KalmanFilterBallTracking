@@ -19,7 +19,7 @@ int main(int argc, char** argv)
 {
 	std::string data_path = argc < 2 ? "ball_tennis" : argv[1];
 	dayan::KalmanFilterType kfType = argc < 3
-									 ? dayan::KalmanFilterType::Extended_6x6
+									 ? dayan::KalmanFilterType::Extended_9x8
 									 : (dayan::KalmanFilterType)atoi(argv[2]);
 	auto config = dayan::Config::getInstance(data_path);
 
@@ -106,8 +106,7 @@ int main(int argc, char** argv)
 		if (inputFrame.empty())
 			break;
 
-		float dt = config->dTimes[kalmanFilter->frame];
-		std::cout << "dt: " << dt << std::endl;
+		std::cout << "dt: " << config->dTimes[kalmanFilter->frame] << std::endl;
 
 		// In the first iteration we initialize the images that we will use to store results.
 		if (0 == kalmanFilter->frame)
@@ -139,7 +138,7 @@ int main(int argc, char** argv)
 				error,
 				c,
 				kalmanFilter->Z,
-				dt
+				kalmanFilter->frame
 		);
 //		dayan::printMat(kalmanFilter->Z, "Z");
 		// Test static Z
@@ -191,7 +190,6 @@ int main(int argc, char** argv)
 		if (0 < sleep)
 			std::this_thread::sleep_for(std::chrono::seconds(1));
 
-		dt = 0;
 		// If the user presses a key, the cycle ends.
 		//		break;
 	} while (cv::waitKeyEx(30) < 0);

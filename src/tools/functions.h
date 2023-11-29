@@ -21,7 +21,7 @@ namespace dayan
 			int const& error,
 			Circle*& circle,
 			cv::Mat& Z,
-			float const& dt
+			int const& frame
 	)
 	{
 		makeMeasurement(
@@ -92,6 +92,8 @@ namespace dayan
 		auto x_k_1 = Z_1.at<float>(0);  // x_k-1
 		auto y_k_1 = Z_1.at<float>(1);  // y_k-1
 
+		float dt = config->dTimes[frame];
+
 		auto dx = 0 == dt ? 0 : (x - x_k_1) / dt;
 		auto dy = 0 == dt ? 0 : (y - y_k_1) / dt;
 		Z.at<float>(3) = dx;
@@ -114,11 +116,14 @@ namespace dayan
 			return;
 		}
 
+		float dt_k_1 = 0 == frame ? 0 : config->dTimes[frame - 1];
+		auto dt_avg = (dt + dt_k_1) / 2;
+
 		auto dx_k_1 = Z_1.at<float>(3);  // dx_k-1
 		auto dy_k_1 = Z_1.at<float>(4);  // dy_k-1
 
-		auto ddx = 0 == dt ? 0 : (dx - dx_k_1) / dt;
-		auto ddy = 0 == dt ? 0 : (dy - dy_k_1) / dt;
+		auto ddx = 0 == dt ? 0 : (dx - dx_k_1) / dt_avg;
+		auto ddy = 0 == dt ? 0 : (dy - dy_k_1) / dt_avg;
 		Z.at<float>(6) = ddx;
 		Z.at<float>(7) = ddy;
 
