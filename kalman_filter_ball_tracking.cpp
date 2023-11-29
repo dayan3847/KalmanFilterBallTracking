@@ -21,7 +21,7 @@ int main(int argc, char** argv)
 	auto config = dayan::Config::getInstance(data_path);
 
 	std::string inputWinName = "Input";
-	std::string maskWinName = "Mask";
+//	std::string maskWinName = "Mask";
 
 	// KalmanFilter
 	dayan::KalmanFilter* kalmanFilter = nullptr;
@@ -44,7 +44,7 @@ int main(int argc, char** argv)
 		return -1;
 	}
 	cv::namedWindow(inputWinName, 1);
-	cv::namedWindow(maskWinName, 1);
+//	cv::namedWindow(maskWinName, 1);
 
 	int sleep = 0;
 	cv::createTrackbar("Sleep", inputWinName, &sleep, 1);
@@ -58,11 +58,11 @@ int main(int argc, char** argv)
 	int lSlidePos = 16;
 	arturo::barData umLuz(100. / SLIDE_MAX, 0);
 	cv::createTrackbar("umLuz",
-			inputWinName,
-			&lSlidePos,
-			SLIDE_MAX,
-			arturo::umLuzChange,
-			(void*)&umLuz);
+		inputWinName,
+		&lSlidePos,
+		SLIDE_MAX,
+		arturo::umLuzChange,
+		(void*)&umLuz);
 	arturo::umLuzChange(0, (void*)&umLuz);
 	// Slide 3 (error permitido)
 	int error = 5;
@@ -115,18 +115,18 @@ int main(int argc, char** argv)
 		//		std::cout << "\033[1;32m" << "umDistVal: " << umDist.val << "\033[0m" << std::endl;
 		//		std::cout << "\033[1;32m" << "umLuz.val: " << umLuz.val << "\033[0m" << std::endl;
 		dayan::makeMeasurement(
-				inputFrameLab,
-				mask,
-				mean,
-				iCov,
-				60,
-				//umDist.val,
-				umLuz.val,
-				contourPointMinCount,
-				error,
-				c,
-				kalmanFilter->Z,
-				dt
+			inputFrameLab,
+			mask,
+			mean,
+			iCov,
+			60,
+			//umDist.val,
+			umLuz.val,
+			contourPointMinCount,
+			error,
+			c,
+			kalmanFilter->Z,
+			dt
 		);
 //		dayan::printMat(kalmanFilter->Z, "Z");
 		// Test static Z
@@ -148,13 +148,18 @@ int main(int argc, char** argv)
 		//dayan::drawCircle(inputFrame, c);
 		dayan::drawCircleByZ(inputFrame, kalmanFilter->Z, cv::Scalar(255, 0, 0));
 
-		if (0 == frameCount)
+		if (frameCount < 3)
 		{
-			imwrite("./data/" + data_path + "/FirstFrame.png", inputFrame);
+			imwrite("./data/" + data_path + "/frame_" + std::to_string(frameCount) + ".png", inputFrame);
+		}
+
+		if (2 == frameCount)
+		{
 			kalmanFilter->init_X();
 		}
-		else
+		else if (2 < frameCount)
 		{
+
 			kalmanFilter->predict_correct(dt);
 			//			dayan::printMat(kalmanFilter->X, "corrected");
 			//			dayan::printMat(kalmanFilter->Xp, "predicted");
@@ -178,10 +183,10 @@ int main(int argc, char** argv)
 		//		break;
 	} while (cv::waitKeyEx(30) < 0);
 
-	imwrite("./data/" + data_path + "/LastFrame.png", inputFrame);
+	imwrite("./data/" + data_path + "/frame_last.png", inputFrame);
 
 	// Close windows that were opened.
-	cv::destroyWindow(maskWinName);
+//	cv::destroyWindow(maskWinName);
 	cv::destroyWindow(inputWinName);
 
 	std::cout << "\033[1;32m" << "End" << "\033[0m" << std::endl;
