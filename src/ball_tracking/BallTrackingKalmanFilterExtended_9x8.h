@@ -2,8 +2,8 @@
 // Created by dayan3847 on 29/11/23.
 //
 
-#ifndef BALLTRACKINGKALMANFILTEREXTENDED2_H
-#define BALLTRACKINGKALMANFILTEREXTENDED2_H
+#ifndef KALMANFILTERBALLTRACKING_BALLTRACKINGKALMANFILTEREXTENDED_9X8_H
+#define KALMANFILTERBALLTRACKING_BALLTRACKINGKALMANFILTEREXTENDED_9X8_H
 
 #include "opencv2/opencv.hpp"
 #include "../tools/Config.h"
@@ -13,12 +13,12 @@
 namespace dayan
 {
 
-	class BallTrackingKalmanFilterExtended2 : public KalmanFilterExtended
+	class BallTrackingKalmanFilterExtended_9x8: public KalmanFilterExtended
 	{
 
 	public:
 		// Constructor
-		BallTrackingKalmanFilterExtended2()
+		BallTrackingKalmanFilterExtended_9x8()
 				: KalmanFilterExtended(9, 8)
 		{
 			Q = 1e-4 * cv::Mat::eye(n, n, CV_32F);
@@ -88,20 +88,7 @@ namespace dayan
 
 			auto Z2 = Z * Z;
 			auto Z3 = Z2 * Z;
-			auto Z4 = Z3 * Z;
 			auto dZ2 = dZ * dZ;
-
-//			h_x = sp.Matrix([
-//			[X / Z],  # x
-//			[Y / Z],  # y
-//			[Rm / Z],  # r
-//			[-X * dZ / Z ** 2 + dX / Z],  # dx
-//			[-Y * dZ / Z ** 2 + dY / Z],  # dy
-//			[-Rm * dZ / Z ** 2],  # dr
-//			[(-X * (ddZ - 2 * dZ ** 2 / Z) / Z + ddX - 2 * dX * dZ / Z) / Z],  # ddx
-//			[(-Y * (ddZ - 2 * dZ ** 2 / Z) / Z + ddY - 2 * dY * dZ / Z) / Z],  # ddy
-//			[-Rm * (ddZ - 2 * dZ ** 2 / Z) / Z ** 2],  # ddr
-//			])
 
 			h = (cv::Mat_<float>(m, 1)
 					<<
@@ -113,7 +100,6 @@ namespace dayan
 					-Rm * dZ / Z2, // dr
 					(-X * (ddZ - 2 * dZ2 / Z) / Z + ddX - 2 * dX * dZ / Z) / Z, // ddx
 					(-Y * (ddZ - 2 * dZ2 / Z) / Z + ddY - 2 * dY * dZ / Z) / Z // ddy
-//				-Rm * (ddZ - 2 * dZ2 / Z) / Z2 // ddr
 			);
 
 			H = (cv::Mat_<float>(m, n)
@@ -139,12 +125,10 @@ namespace dayan
 					(Y * (ddZ - 2 * dZ2 / Z) / Z2 - 2 * Y * dZ2 / Z3 + 2 * dY * dZ / Z2) / Z
 					- (-Y * (ddZ - 2 * dZ2 / Z) / Z + ddY - 2 * dY * dZ / Z) / Z2, 0, -2 * dZ / Z2,
 					(4 * Y * dZ / Z2 - 2 * dY / Z) / Z, 0, 1 / Z, -Y / Z2
-
-//				0, 0, 2 * Rm * (ddZ - 2 * dZ2 / Z) / Z3 - 2 * Rm * dZ2 / Z4, 0, 0, 4 * Rm * dZ / Z3, 0, 0, -Rm / Z2
 			);
 		}
 	};
 
 } // dayan
 
-#endif //BALLTRACKINGKALMANFILTEREXTENDED2_H
+#endif //KALMANFILTERBALLTRACKING_BALLTRACKINGKALMANFILTEREXTENDED_9X8_H

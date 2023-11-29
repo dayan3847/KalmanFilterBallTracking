@@ -28,8 +28,8 @@
 
 ## Kalman Filter Types
 
-* **Extended Kalman Filter:** `0` (default)
-* **Implicit Extended Kalman Filter:** `1`
+* **Extended_6x5 Kalman Filter:** `0` (default)
+* **Implicit Extended_6x5 Kalman Filter:** `1`
 
 ## Installation
 
@@ -106,13 +106,13 @@ You can see: [Makefile](Makefile)
 
 ## Examples:
 
-Tennis ball with Implicit Extended Kalman Filter:
+Tennis ball with Implicit Extended_6x5 Kalman Filter:
 
 ```sh
 ./cmake-build-debug/KalmanFilterBallTracking ball_tennis 1;
 ```
 
-Orange ball with Extended Kalman Filter:
+Orange ball with Extended_6x5 Kalman Filter:
 
 ```sh
 ./cmake-build-debug/KalmanFilterBallTracking ball_orange 0;
@@ -120,8 +120,8 @@ Orange ball with Extended Kalman Filter:
 
 ## Analysis and Matrices
 
-* [Extended Kalman Filter](doc/ball_tracking_kalman_filter_extended.ipynb)
-* [Implicit Extended Kalman Filter](doc/ball_tracking_kalman_filter_extended_implicit.ipynb)
+* [Extended_6x5 Kalman Filter](doc/ball_tracking_kalman_filter_extended.ipynb)
+* [Implicit Extended_6x5 Kalman Filter](doc/ball_tracking_kalman_filter_extended_implicit.ipynb)
 
 ## Colaborators
 

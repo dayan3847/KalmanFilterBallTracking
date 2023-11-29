@@ -50,7 +50,7 @@ namespace dayan
 
 		cv::Mat color; //!< Modelo de color
 		float radio; //!< Radio Real (en metros)
-		std::vector<int> dTimes; //!< Vector de tiempos entre frames (deltaTimes)
+		std::vector<float> dTimes; //!< Vector de tiempos entre frames (deltaTimes)
 		cv::VideoCapture video; //!< Video de entrada
 		cv::Mat k; //!< Matriz de calibracion
 		cv::Mat kInv; //!< Matriz de calibracion (inversa)

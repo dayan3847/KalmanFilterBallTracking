@@ -10,6 +10,8 @@
 #include "src/kf/KalmanFilterType.h"
 #include "src/ball_tracking/BallTrackingKalmanFilterExtended.h"
 #include "src/ball_tracking/BallTrackingKalmanFilterExtended2.h"
+#include "src/ball_tracking/BallTrackingKalmanFilterExtended_6x6.h"
+#include "src/ball_tracking/BallTrackingKalmanFilterExtended_9x8.h"
 #include "src/ball_tracking/BallTrackingKalmanFilterExtendedImplicit.h"
 #include "src/ball_tracking/BallTrackingKalmanFilterUnscented.h"
 
@@ -17,7 +19,7 @@ int main(int argc, char** argv)
 {
 	std::string data_path = argc < 2 ? "ball_tennis" : argv[1];
 	dayan::KalmanFilterType kfType = argc < 3
-									 ? dayan::KalmanFilterType::Extended2
+									 ? dayan::KalmanFilterType::Extended_6x6
 									 : (dayan::KalmanFilterType)atoi(argv[2]);
 	auto config = dayan::Config::getInstance(data_path);
 
@@ -28,17 +30,25 @@ int main(int argc, char** argv)
 	dayan::KalmanFilter* kalmanFilter = nullptr;
 	switch (kfType)
 	{
-	case dayan::KalmanFilterType::Extended:
+	case dayan::KalmanFilterType::Extended_6x5:
 		kalmanFilter = new dayan::BallTrackingKalmanFilterExtended();
-		inputWinName = "Extended Kalman Filter";
+		inputWinName = "Extended Kalman Filter 6x5";
 		break;
-	case dayan::KalmanFilterType::Extended2:
+	case dayan::KalmanFilterType::Extended_6x6:
+		kalmanFilter = new dayan::BallTrackingKalmanFilterExtended_6x6();
+		inputWinName = "Extended Kalman Filter 6x6";
+		break;
+	case dayan::KalmanFilterType::Extended_9x8:
+		kalmanFilter = new dayan::BallTrackingKalmanFilterExtended_9x8();
+		inputWinName = "Extended Kalman Filter 9x8";
+		break;
+	case dayan::KalmanFilterType::Extended_9x9:
 		kalmanFilter = new dayan::BallTrackingKalmanFilterExtended2();
-		inputWinName = "Extended Kalman Filter 2";
+		inputWinName = "Extended Kalman Filter 9x9";
 		break;
-	case dayan::KalmanFilterType::ExtendedImplicit:
+	case dayan::KalmanFilterType::ExtendedImplicit_6x5:
 		kalmanFilter = new dayan::BallTrackingKalmanFilterExtendedImplicit();
-		inputWinName = "Implicit Extended Kalman Filter";
+		inputWinName = "Implicit Extended Kalman Filter 6x5";
 		break;
 	case dayan::KalmanFilterType::Unscented:
 		kalmanFilter = new dayan::BallTrackingKalmanFilterUnscented();
@@ -51,7 +61,7 @@ int main(int argc, char** argv)
 	cv::namedWindow(inputWinName, 1);
 //	cv::namedWindow(maskWinName, 1);
 
-	int sleep = 0;
+	int sleep = 1;
 	cv::createTrackbar("Sleep", inputWinName, &sleep, 1);
 	// Slide 1 (distancia)
 	//	int dSlidePos = 200;
@@ -63,11 +73,11 @@ int main(int argc, char** argv)
 	int lSlidePos = 16;
 	arturo::barData umLuz(100. / SLIDE_MAX, 0);
 	cv::createTrackbar("umLuz",
-		inputWinName,
-		&lSlidePos,
-		SLIDE_MAX,
-		arturo::umLuzChange,
-		(void*)&umLuz);
+			inputWinName,
+			&lSlidePos,
+			SLIDE_MAX,
+			arturo::umLuzChange,
+			(void*)&umLuz);
 	arturo::umLuzChange(0, (void*)&umLuz);
 	// Slide 3 (error permitido)
 	int error = 5;
@@ -79,7 +89,7 @@ int main(int argc, char** argv)
 	cv::Mat inputFrame, inputFrameLab, mask, mean, iCov;
 	cv::Mat inputFrame0;
 
-	int dt = 0;
+	float dt = 0.;
 	int frameCount = -1;
 	do
 	{
@@ -120,18 +130,18 @@ int main(int argc, char** argv)
 		//		std::cout << "\033[1;32m" << "umDistVal: " << umDist.val << "\033[0m" << std::endl;
 		//		std::cout << "\033[1;32m" << "umLuz.val: " << umLuz.val << "\033[0m" << std::endl;
 		dayan::makeMeasurement(
-			inputFrameLab,
-			mask,
-			mean,
-			iCov,
-			60,
-			//umDist.val,
-			umLuz.val,
-			contourPointMinCount,
-			error,
-			c,
-			kalmanFilter->Z,
-			dt
+				inputFrameLab,
+				mask,
+				mean,
+				iCov,
+				60,
+				//umDist.val,
+				umLuz.val,
+				contourPointMinCount,
+				error,
+				c,
+				kalmanFilter->Z,
+				dt
 		);
 //		dayan::printMat(kalmanFilter->Z, "Z");
 		// Test static Z
