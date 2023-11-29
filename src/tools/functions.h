@@ -81,9 +81,9 @@ namespace dayan
 			<<
 			centerMe.at<float>(0),
 			centerMe.at<float>(1),
+			radiusMe,
 			xp,
-			yp,
-			radiusMe
+			yp
 		);
 		config->list_Z.push_back(Z);
 	}
@@ -109,7 +109,7 @@ namespace dayan
 		centerPx = centerPx / centerPx.at<float>(2);
 		cv::Point center(cvRound(centerPx.at<float>(0)), cvRound(centerPx.at<float>(1)));
 		// Radio en metros
-		float radiusMe = ZZ.at<float>(4);
+		float radiusMe = ZZ.at<float>(2);
 		// Radio en pixeles
 		float radiusPx = radiusMe * config->k.at<float>(0, 0);
 		int radius = cvRound(radiusPx);
@@ -127,17 +127,17 @@ namespace dayan
 	{
 		auto config = dayan::Config::getInstance();
 
-		float X = XX.at<float>(0);
-		float Y = XX.at<float>(1);
-		float Z = XX.at<float>(2);
+		auto X = XX.at<float>(0);
+		auto Y = XX.at<float>(1);
+		auto Z = XX.at<float>(2);
+
+		auto Rm = config->radio;
 
 		cv::Mat ZZ = (cv::Mat_<float>(5, 1)
 			<<
-			X / Z,
-			Y / Z,
-			0,
-			0,
-			config->radio / Z
+			X / Z, // x
+			Y / Z, // y
+			Rm / Z // r
 		);
 
 		drawCircleByZ(inputFrame, ZZ, color);
