@@ -91,7 +91,7 @@ namespace dayan
 //			[-Y * dZ / Z ** 2 + dY / Z],  # dy
 //			])
 
-			h = (cv::Mat_<float>(5, 1)
+			h = (cv::Mat_<float>(m, 1)
 				<<
 				X / Z, // x
 				Y / Z, // y
@@ -100,7 +100,7 @@ namespace dayan
 				-Y * dZ / Z2 + dY / Z // dy
 			);
 
-			H = (cv::Mat_<float>(5, 6)
+			H = (cv::Mat_<float>(m, n)
 				<<
 				_1_Z, 0, -X / Z2, 0, 0, 0,
 				0, _1_Z, -Y / Z2, 0, 0, 0,

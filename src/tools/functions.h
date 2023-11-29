@@ -90,7 +90,7 @@ namespace dayan
 		Z.at<float>(3) = dx;
 		Z.at<float>(4) = dy;
 
-		if (m == 9)
+		if (m >= 8)
 		{
 			auto dr = 0 == dt ? 0 : (r - Z_1.at<float>(2)) / (float)dt;
 			Z.at<float>(5) = dr;
@@ -100,11 +100,15 @@ namespace dayan
 						  : config->list_Z.at(config->list_Z.size() - 2);
 			auto ddx = 0 == dt ? 0 : (dx - Z_2.at<float>(3)) / (float)dt;
 			auto ddy = 0 == dt ? 0 : (dy - Z_2.at<float>(4)) / (float)dt;
-			auto ddr = 0 == dt ? 0 : (dr - Z_2.at<float>(5)) / (float)dt;
 
 			Z.at<float>(6) = ddx;
 			Z.at<float>(7) = ddy;
-			Z.at<float>(8) = ddr;
+
+			if (m == 9)
+			{
+				auto ddr = 0 == dt ? 0 : (dr - Z_2.at<float>(5)) / (float)dt;
+				Z.at<float>(8) = ddr;
+			}
 		}
 
 		config->list_Z.push_back(Z.clone());
