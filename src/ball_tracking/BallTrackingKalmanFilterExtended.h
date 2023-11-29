@@ -20,11 +20,9 @@ namespace dayan
 		BallTrackingKalmanFilterExtended()
 			: KalmanFilterExtended(6, 5)
 		{
-			Q = 1e-4 * cv::Mat::eye(6, 6, CV_32F);
-			R = 1 * cv::Mat::eye(5, 5, CV_32F);
-			P = 1 * cv::Mat::eye(6, 6, CV_32F);
-
-			I = cv::Mat::eye(6, 6, CV_32F);
+			Q = 1e-4 * cv::Mat::eye(n, n, CV_32F);
+			R = 1 * cv::Mat::eye(m, m, CV_32F);
+			P = 1 * cv::Mat::eye(n, n, CV_32F);
 		}
 
 		// Inicializa el primer estado a partir de la primera medida
@@ -40,7 +38,7 @@ namespace dayan
 			auto X = x * Z;
 			auto Y = y * Z;
 
-			this->X = (cv::Mat_<float>(6, 1)
+			this->X = (cv::Mat_<float>(n, 1)
 				<<
 				X,
 				Y,
@@ -54,7 +52,7 @@ namespace dayan
 		// Update Matrix A
 		void update_A(const int& dt) override
 		{
-			A = (cv::Mat_<float>(6, 6)
+			A = (cv::Mat_<float>(n, n)
 				<<
 				1, 0, 0, dt, 0, 0,
 				0, 1, 0, 0, dt, 0,
@@ -79,6 +77,11 @@ namespace dayan
 
 			auto Rm = config->radio;
 
+			auto Z2 = Z * Z;
+			auto Z3 = Z2 * Z;
+			auto _1_Z = 1 / Z;
+			auto _dZ_Z2 = -dZ / Z2;
+			auto _2dZ_Z3 = 2 * dZ / Z3;
 
 //			h_x = sp.Matrix([
 //			[X / Z],  # x
@@ -88,8 +91,6 @@ namespace dayan
 //			[-Y * dZ / Z ** 2 + dY / Z],  # dy
 //			])
 
-			auto Z2 = Z * Z;
-
 			h = (cv::Mat_<float>(5, 1)
 				<<
 				X / Z, // x
@@ -98,11 +99,6 @@ namespace dayan
 				-X * dZ / Z2 + dX / Z, // dx
 				-Y * dZ / Z2 + dY / Z // dy
 			);
-
-			auto Z3 = Z2 * Z;
-			auto _1_Z = 1 / Z;
-			auto _dZ_Z2 = -dZ / Z2;
-			auto _2dZ_Z3 = 2 * dZ / Z3;
 
 			H = (cv::Mat_<float>(5, 6)
 				<<

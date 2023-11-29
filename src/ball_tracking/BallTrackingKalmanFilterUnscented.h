@@ -22,7 +22,6 @@ namespace dayan
 			Q = 1e-6 * cv::Mat::eye(6, 6, CV_32F);
 			R = 1 * cv::Mat::eye(5, 5, CV_32F);
 			P = 1 * cv::Mat::eye(6, 6, CV_32F);
-			I = cv::Mat::eye(6, 6, CV_32F);
 		}
 		// Inicializa el primer estado a partir de la primera medida
 		void init_X() override

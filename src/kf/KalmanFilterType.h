@@ -11,6 +11,7 @@ namespace dayan
 	enum KalmanFilterType
 	{
 		Extended,
+		Extended2,
 		ExtendedImplicit,
 		Unscented,
 	};

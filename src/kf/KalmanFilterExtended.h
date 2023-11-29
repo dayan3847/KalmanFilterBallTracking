@@ -17,6 +17,8 @@ namespace dayan
 		KalmanFilterExtended(int n, int m)
 			: KalmanFilter(n, m)
 		{
+			Z = cv::Mat::zeros(m, 1, CV_32F);
+			I = cv::Mat::eye(n, n, CV_32F);
 		}
 		void correct() override
 		{

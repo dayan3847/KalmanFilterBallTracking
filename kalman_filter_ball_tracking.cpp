@@ -9,6 +9,7 @@
 #include "src/tools/functions.h"
 #include "src/kf/KalmanFilterType.h"
 #include "src/ball_tracking/BallTrackingKalmanFilterExtended.h"
+#include "src/ball_tracking/BallTrackingKalmanFilterExtended2.h"
 #include "src/ball_tracking/BallTrackingKalmanFilterExtendedImplicit.h"
 #include "src/ball_tracking/BallTrackingKalmanFilterUnscented.h"
 
@@ -16,7 +17,7 @@ int main(int argc, char** argv)
 {
 	std::string data_path = argc < 2 ? "ball_tennis" : argv[1];
 	dayan::KalmanFilterType kfType = argc < 3
-									 ? dayan::KalmanFilterType::Extended
+									 ? dayan::KalmanFilterType::Extended2
 									 : (dayan::KalmanFilterType)atoi(argv[2]);
 	auto config = dayan::Config::getInstance(data_path);
 
@@ -30,6 +31,10 @@ int main(int argc, char** argv)
 	case dayan::KalmanFilterType::Extended:
 		kalmanFilter = new dayan::BallTrackingKalmanFilterExtended();
 		inputWinName = "Extended Kalman Filter";
+		break;
+	case dayan::KalmanFilterType::Extended2:
+		kalmanFilter = new dayan::BallTrackingKalmanFilterExtended2();
+		inputWinName = "Extended Kalman Filter 2";
 		break;
 	case dayan::KalmanFilterType::ExtendedImplicit:
 		kalmanFilter = new dayan::BallTrackingKalmanFilterExtendedImplicit();
@@ -46,7 +51,7 @@ int main(int argc, char** argv)
 	cv::namedWindow(inputWinName, 1);
 //	cv::namedWindow(maskWinName, 1);
 
-	int sleep = 0;
+	int sleep = 1;
 	cv::createTrackbar("Sleep", inputWinName, &sleep, 1);
 	// Slide 1 (distancia)
 	//	int dSlidePos = 200;

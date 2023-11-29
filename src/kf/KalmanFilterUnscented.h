@@ -25,7 +25,8 @@ namespace dayan
 		float wc_0;
 		float w_i;
 
-		KalmanFilterUnscented(int n, int m) : KalmanFilter(n, m)
+		KalmanFilterUnscented(int n, int m)
+			: KalmanFilter(n, m)
 		{
 			_2n_1 = 2 * n + 1;
 			auto n_ = (float)n;
@@ -41,8 +42,10 @@ namespace dayan
 			w_i = 1 / (2 * (n_ + lambda));
 		}
 
-		void correct() override
+		void predict_correct(const int& dt)
 		{
+			this->update_A(dt);
+
 			cv::Mat sqrtP;
 			bool success = dayan::cholesky(Pp, sqrtP);
 

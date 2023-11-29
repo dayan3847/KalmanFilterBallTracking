@@ -73,19 +73,41 @@ namespace dayan
 //		float radiusMeTest3 = p2Me.at<float>(1) - centerMe.at<float>(1);
 
 
-		cv::Mat prevZ = config->list_Z.empty() ? cv::Mat::zeros(5, 1, CV_32F) : config->list_Z.back();
-		float xp = 0 == dt ? 0 : (centerMe.at<float>(0) - prevZ.at<float>(0)) / (float)dt;
-		float yp = 0 == dt ? 0 : (centerMe.at<float>(1) - prevZ.at<float>(1)) / (float)dt;
+		auto x = centerMe.at<float>(0);
+		auto y = centerMe.at<float>(1);
+		auto r = radiusMe;
 
-		Z = (cv::Mat_<float>(5, 1)
-			<<
-			centerMe.at<float>(0),
-			centerMe.at<float>(1),
-			radiusMe,
-			xp,
-			yp
-		);
-		config->list_Z.push_back(Z);
+		Z.at<float>(0) = x;
+		Z.at<float>(1) = y;
+		Z.at<float>(2) = r;
+
+		auto m = Z.rows;
+		cv::Mat Z_1 = config->list_Z.empty() ? cv::Mat::zeros(m, 1, CV_32F) : config->list_Z.back();
+
+		auto dx = 0 == dt ? 0 : (x - Z_1.at<float>(0)) / (float)dt;
+		auto dy = 0 == dt ? 0 : (y - Z_1.at<float>(1)) / (float)dt;
+
+		Z.at<float>(3) = dx;
+		Z.at<float>(4) = dy;
+
+		if (m == 9)
+		{
+			auto dr = 0 == dt ? 0 : (r - Z_1.at<float>(2)) / (float)dt;
+			Z.at<float>(5) = dr;
+
+			cv::Mat Z_2 = config->list_Z.size() < 2
+						  ? cv::Mat::zeros(m, 1, CV_32F)
+						  : config->list_Z.at(config->list_Z.size() - 2);
+			auto ddx = 0 == dt ? 0 : (dx - Z_2.at<float>(3)) / (float)dt;
+			auto ddy = 0 == dt ? 0 : (dy - Z_2.at<float>(4)) / (float)dt;
+			auto ddr = 0 == dt ? 0 : (dr - Z_2.at<float>(5)) / (float)dt;
+
+			Z.at<float>(6) = ddx;
+			Z.at<float>(7) = ddy;
+			Z.at<float>(8) = ddr;
+		}
+
+		config->list_Z.push_back(Z.clone());
 	}
 
 	// pintar el circulo a partir de una medicion
@@ -133,7 +155,7 @@ namespace dayan
 
 		auto Rm = config->radio;
 
-		cv::Mat ZZ = (cv::Mat_<float>(5, 1)
+		cv::Mat ZZ = (cv::Mat_<float>(3, 1)
 			<<
 			X / Z, // x
 			Y / Z, // y
