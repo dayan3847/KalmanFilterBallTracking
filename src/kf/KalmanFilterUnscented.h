@@ -42,9 +42,11 @@ namespace dayan
 			w_i = 1 / (2 * (n_ + lambda));
 		}
 
-		void predict_correct(const int& dt)
+		void predict_correct(const int& dt) override
 		{
 			this->update_A(dt);
+			Xp = A * X;
+			Pp = A * P * A.t() + Q;
 
 			cv::Mat sqrtP;
 			bool success = dayan::cholesky(Pp, sqrtP);

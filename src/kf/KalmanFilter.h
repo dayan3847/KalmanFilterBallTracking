@@ -48,6 +48,7 @@ namespace dayan
 		{
 			this->n = n;
 			this->m = m;
+			Z = cv::Mat::zeros(m, 1, CV_32F);
 		}
 
 		void predict(const int& dt)
@@ -68,7 +69,7 @@ namespace dayan
 		{
 		}
 
-		void predict_correct(const int& dt)
+		virtual void predict_correct(const int& dt)
 		{
 			this->predict(dt);
 			this->correct();
