@@ -19,7 +19,6 @@ set(
         src/kf/KalmanFilterExtended.h
         src/kf/KalmanFilterExtendedImplicit.h
         src/ball_tracking/BallTrackingKalmanFilterExtended.h
-        src/ball_tracking/BallTrackingKalmanFilterExtended2.h
         src/ball_tracking/BallTrackingKalmanFilterExtendedImplicit.h
         src/kf/KalmanFilterUnscented.h
         src/ball_tracking/BallTrackingKalmanFilterUnscented.h
