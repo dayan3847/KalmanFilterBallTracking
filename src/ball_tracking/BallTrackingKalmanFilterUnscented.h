@@ -49,8 +49,10 @@ namespace dayan
 		}
 
 		// Update Matrix A
-		void update_A(const float& dt) override
+		void update_A() override
 		{
+			auto config = dayan::Config::getInstance();
+			float dt = config->dTimes[frame];
 			A = (cv::Mat_<float>(n, n)
 					<<
 					1, 0, 0, dt, 0, 0,

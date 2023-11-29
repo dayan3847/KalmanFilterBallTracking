@@ -19,7 +19,7 @@ int main(int argc, char** argv)
 {
 	std::string data_path = argc < 2 ? "ball_tennis" : argv[1];
 	dayan::KalmanFilterType kfType = argc < 3
-									 ? dayan::KalmanFilterType::Extended_9x9
+									 ? dayan::KalmanFilterType::Extended_6x6
 									 : (dayan::KalmanFilterType)atoi(argv[2]);
 	auto config = dayan::Config::getInstance(data_path);
 
@@ -89,11 +89,9 @@ int main(int argc, char** argv)
 	cv::Mat inputFrame, inputFrameLab, mask, mean, iCov;
 	cv::Mat inputFrame0;
 
-	float dt = 0.;
-	int frameCount = -1;
 	do
 	{
-		std::cout << "\033[1;32m" << "Frame: " << ++frameCount << "\033[0m" << std::endl;
+		std::cout << "\033[1;32m" << "Frame: " << ++kalmanFilter->frame << "\033[0m" << std::endl;
 		// We capture an image, and validate that the operation worked.
 		config->video >> inputFrame;
 //		if (0 == frameCount)
@@ -108,11 +106,11 @@ int main(int argc, char** argv)
 		if (inputFrame.empty())
 			break;
 
-		dt += config->dTimes[frameCount];
+		float dt = config->dTimes[kalmanFilter->frame];
 		std::cout << "dt: " << dt << std::endl;
 
 		// In the first iteration we initialize the images that we will use to store results.
-		if (0 == frameCount)
+		if (0 == kalmanFilter->frame)
 		{
 			arturo::convertLab(config->color, inputFrameLab);
 
@@ -163,19 +161,19 @@ int main(int argc, char** argv)
 		//dayan::drawCircle(inputFrame, c);
 		dayan::drawCircleByZ(inputFrame, kalmanFilter->Z, cv::Scalar(255, 0, 0));
 
-		if (frameCount < 3)
+		if (kalmanFilter->frame < 3)
 		{
-			imwrite("./data/" + data_path + "/frame_" + std::to_string(frameCount) + ".png", inputFrame);
+			imwrite("./data/" + data_path + "/frame_" + std::to_string(kalmanFilter->frame) + ".png", inputFrame);
 		}
 
-		if (2 == frameCount)
+		if (2 == kalmanFilter->frame)
 		{
 			kalmanFilter->init_X();
 		}
-		else if (2 < frameCount)
+		else if (2 < kalmanFilter->frame)
 		{
 
-			kalmanFilter->predict_correct(dt);
+			kalmanFilter->predict_correct();
 			//			dayan::printMat(kalmanFilter->X, "corrected");
 			//			dayan::printMat(kalmanFilter->Xp, "predicted");
 			// predicted color red
