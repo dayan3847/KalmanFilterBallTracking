@@ -176,7 +176,7 @@ int main(int argc, char** argv)
 			//			dayan::printMat(kalmanFilter->X, "corrected");
 			//			dayan::printMat(kalmanFilter->Xp, "predicted");
 			// predicted color red
-			//dayan::drawCircleByX(inputFrame, kalmanFilter->Xp, cv::Scalar(0, 0, 255));
+			dayan::drawCircleByX(inputFrame, kalmanFilter->Xp, cv::Scalar(0, 0, 255));
 			// corrected color green
 			dayan::drawCircleByX(inputFrame, kalmanFilter->X, cv::Scalar(0, 255, 0));
 		}
