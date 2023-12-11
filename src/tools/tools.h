@@ -69,22 +69,23 @@ namespace dayan
 				  << oW << " x " << oH << ") to (" << IM_WIDTH << " x " << IM_HEIGHT << ")" << std::endl;
 	}
 
-	void readTimes(const std::string& timesFilename, std::vector<int>& times)
+	void readTimes(const std::string& timesFilename, std::vector<float>& times)
 	{
 		// Leer un archivo de texto
 		std::ifstream infile(timesFilename);
-		int time;
+		float time;
 		while (infile >> time)
 		{
 			times.push_back(time);
+//			times.push_back(time / 1000); // convertir a segundos
 		}
 	}
 
-	void readDeltaTimes(const std::string& timesFilename, std::vector<int>& deltaTimes)
+	void readDeltaTimes(const std::string& timesFilename, std::vector<float>& deltaTimes)
 	{
-		std::vector<int> times;
+		std::vector<float> times;
 		readTimes(timesFilename, times);
-		deltaTimes = std::vector<int>(times.size());
+		deltaTimes = std::vector<float>(times.size());
 		deltaTimes[0] = 0;
 		for (int i = 1; i < (int)times.size(); ++i)
 		{

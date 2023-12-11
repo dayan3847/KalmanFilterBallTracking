@@ -1,9 +1,9 @@
 //
-// Created by dayan3847 on 14/11/23.
+// Created by dayan3847 on 29/11/23.
 //
 
-#ifndef BALLTRACKINGKALMANFILTEREXTENDED_H
-#define BALLTRACKINGKALMANFILTEREXTENDED_H
+#ifndef KALMANFILTERBALLTRACKING_BALLTRACKINGKALMANFILTEREXTENDED_6X6_H
+#define KALMANFILTERBALLTRACKING_BALLTRACKINGKALMANFILTEREXTENDED_6X6_H
 
 #include "opencv2/opencv.hpp"
 #include "../tools/Config.h"
@@ -13,15 +13,17 @@
 namespace dayan
 {
 
-	class BallTrackingKalmanFilterExtended : public KalmanFilterExtended
+	class BallTrackingKalmanFilterExtended_6x6 : public KalmanFilterExtended
 	{
+
+
 	public:
 		// Constructor
-		BallTrackingKalmanFilterExtended()
-				: KalmanFilterExtended(6, 5)
+		BallTrackingKalmanFilterExtended_6x6()
+				: KalmanFilterExtended(6, 6)
 		{
 			Q = 1e-4 * cv::Mat::eye(n, n, CV_32F);
-			R = 1 * cv::Mat::eye(m, m, CV_32F);
+			R = 1e-2 * cv::Mat::eye(m, m, CV_32F);
 			P = 1 * cv::Mat::eye(n, n, CV_32F);
 		}
 
@@ -70,6 +72,8 @@ namespace dayan
 		{
 			auto config = dayan::Config::getInstance();
 
+			auto Rm = config->radio;
+
 			auto X = this->Xp.at<float>(0);
 			auto Y = this->Xp.at<float>(1);
 			auto Z = this->Xp.at<float>(2);
@@ -77,21 +81,8 @@ namespace dayan
 			auto dY = this->Xp.at<float>(4);
 			auto dZ = this->Xp.at<float>(5);
 
-			auto Rm = config->radio;
-
 			auto Z2 = Z * Z;
 			auto Z3 = Z2 * Z;
-			auto _1_Z = 1 / Z;
-			auto _dZ_Z2 = -dZ / Z2;
-			auto _2dZ_Z3 = 2 * dZ / Z3;
-
-//			h_x = sp.Matrix([
-//			[X / Z],  # x
-//			[Y / Z],  # y
-//			[Rm / Z],  # r
-//			[-X * dZ / Z ** 2 + dX / Z],  # dx
-//			[-Y * dZ / Z ** 2 + dY / Z],  # dy
-//			])
 
 			h = (cv::Mat_<float>(m, 1)
 					<<
@@ -99,20 +90,22 @@ namespace dayan
 					Y / Z, // y
 					Rm / Z, // r
 					-X * dZ / Z2 + dX / Z, // dx
-					-Y * dZ / Z2 + dY / Z // dy
+					-Y * dZ / Z2 + dY / Z, // dy
+					-Rm * dZ / Z2 // dr
 			);
 
 			H = (cv::Mat_<float>(m, n)
 					<<
-					_1_Z, 0, -X / Z2, 0, 0, 0,
-					0, _1_Z, -Y / Z2, 0, 0, 0,
+					1 / Z, 0, -X / Z2, 0, 0, 0,
+					0, 1 / Z, -Y / Z2, 0, 0, 0,
 					0, 0, -Rm / Z2, 0, 0, 0,
-					_dZ_Z2, 0, X * _2dZ_Z3 - dX / Z2, _1_Z, 0, -X / Z2,
-					0, _dZ_Z2, Y * _2dZ_Z3 - dY / Z2, 0, _1_Z, -Y / Z2
+					-dZ / Z2, 0, 2 * X * dZ / Z3 - dX / Z2, 1 / Z, 0, -X / Z2,
+					0, -dZ / Z2, 2 * Y * dZ / Z3 - dY / Z2, 0, 1 / Z, -Y / Z2,
+					0, 0, 2 * Rm * dZ / Z3, 0, 0, -Rm / Z2
 			);
 		}
 	};
 
 } // dayan
 
-#endif //BALLTRACKINGKALMANFILTEREXTENDED_H
+#endif //KALMANFILTERBALLTRACKING_BALLTRACKINGKALMANFILTEREXTENDED_6X6_H

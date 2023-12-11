@@ -9,7 +9,9 @@
 #include "src/tools/functions.h"
 #include "src/kf/KalmanFilterType.h"
 #include "src/ball_tracking/BallTrackingKalmanFilterExtended.h"
-#include "src/ball_tracking/BallTrackingKalmanFilterExtended2.h"
+#include "src/ball_tracking/BallTrackingKalmanFilterExtended_6x6.h"
+#include "src/ball_tracking/BallTrackingKalmanFilterExtended_9x8.h"
+#include "src/ball_tracking/BallTrackingKalmanFilterExtended_9x9.h"
 #include "src/ball_tracking/BallTrackingKalmanFilterExtendedImplicit.h"
 #include "src/ball_tracking/BallTrackingKalmanFilterUnscented.h"
 
@@ -17,7 +19,7 @@ int main(int argc, char** argv)
 {
 	std::string data_path = argc < 2 ? "ball_tennis" : argv[1];
 	dayan::KalmanFilterType kfType = argc < 3
-									 ? dayan::KalmanFilterType::Extended2
+									 ? dayan::KalmanFilterType::Extended_9x8
 									 : (dayan::KalmanFilterType)atoi(argv[2]);
 	auto config = dayan::Config::getInstance(data_path);
 
@@ -28,17 +30,25 @@ int main(int argc, char** argv)
 	dayan::KalmanFilter* kalmanFilter = nullptr;
 	switch (kfType)
 	{
-	case dayan::KalmanFilterType::Extended:
+	case dayan::KalmanFilterType::Extended_6x5:
 		kalmanFilter = new dayan::BallTrackingKalmanFilterExtended();
-		inputWinName = "Extended Kalman Filter";
+		inputWinName = "Extended Kalman Filter 6x5";
 		break;
-	case dayan::KalmanFilterType::Extended2:
-		kalmanFilter = new dayan::BallTrackingKalmanFilterExtended2();
-		inputWinName = "Extended Kalman Filter 2";
+	case dayan::KalmanFilterType::Extended_6x6:
+		kalmanFilter = new dayan::BallTrackingKalmanFilterExtended_6x6();
+		inputWinName = "Extended Kalman Filter 6x6";
 		break;
-	case dayan::KalmanFilterType::ExtendedImplicit:
+	case dayan::KalmanFilterType::Extended_9x8:
+		kalmanFilter = new dayan::BallTrackingKalmanFilterExtended_9x8();
+		inputWinName = "Extended Kalman Filter 9x8";
+		break;
+	case dayan::KalmanFilterType::Extended_9x9:
+		kalmanFilter = new dayan::BallTrackingKalmanFilterExtended_9x9();
+		inputWinName = "Extended Kalman Filter 9x9";
+		break;
+	case dayan::KalmanFilterType::ExtendedImplicit_6x5:
 		kalmanFilter = new dayan::BallTrackingKalmanFilterExtendedImplicit();
-		inputWinName = "Implicit Extended Kalman Filter";
+		inputWinName = "Implicit Extended Kalman Filter 6x5";
 		break;
 	case dayan::KalmanFilterType::Unscented:
 		kalmanFilter = new dayan::BallTrackingKalmanFilterUnscented();
@@ -51,7 +61,7 @@ int main(int argc, char** argv)
 	cv::namedWindow(inputWinName, 1);
 //	cv::namedWindow(maskWinName, 1);
 
-	int sleep = 0;
+	int sleep = 1;
 	cv::createTrackbar("Sleep", inputWinName, &sleep, 1);
 	// Slide 1 (distancia)
 	//	int dSlidePos = 200;
@@ -63,11 +73,11 @@ int main(int argc, char** argv)
 	int lSlidePos = 16;
 	arturo::barData umLuz(100. / SLIDE_MAX, 0);
 	cv::createTrackbar("umLuz",
-		inputWinName,
-		&lSlidePos,
-		SLIDE_MAX,
-		arturo::umLuzChange,
-		(void*)&umLuz);
+			inputWinName,
+			&lSlidePos,
+			SLIDE_MAX,
+			arturo::umLuzChange,
+			(void*)&umLuz);
 	arturo::umLuzChange(0, (void*)&umLuz);
 	// Slide 3 (error permitido)
 	int error = 5;
@@ -79,11 +89,9 @@ int main(int argc, char** argv)
 	cv::Mat inputFrame, inputFrameLab, mask, mean, iCov;
 	cv::Mat inputFrame0;
 
-	int dt = 0;
-	int frameCount = -1;
 	do
 	{
-		std::cout << "\033[1;32m" << "Frame: " << ++frameCount << "\033[0m" << std::endl;
+		std::cout << "\033[1;32m" << "Frame: " << ++kalmanFilter->frame << "\033[0m" << std::endl;
 		// We capture an image, and validate that the operation worked.
 		config->video >> inputFrame;
 //		if (0 == frameCount)
@@ -98,11 +106,10 @@ int main(int argc, char** argv)
 		if (inputFrame.empty())
 			break;
 
-		dt += config->dTimes[frameCount];
-		std::cout << "dt: " << dt << std::endl;
+		std::cout << "dt: " << config->dTimes[kalmanFilter->frame] << std::endl;
 
 		// In the first iteration we initialize the images that we will use to store results.
-		if (0 == frameCount)
+		if (0 == kalmanFilter->frame)
 		{
 			arturo::convertLab(config->color, inputFrameLab);
 
@@ -120,18 +127,18 @@ int main(int argc, char** argv)
 		//		std::cout << "\033[1;32m" << "umDistVal: " << umDist.val << "\033[0m" << std::endl;
 		//		std::cout << "\033[1;32m" << "umLuz.val: " << umLuz.val << "\033[0m" << std::endl;
 		dayan::makeMeasurement(
-			inputFrameLab,
-			mask,
-			mean,
-			iCov,
-			60,
-			//umDist.val,
-			umLuz.val,
-			contourPointMinCount,
-			error,
-			c,
-			kalmanFilter->Z,
-			dt
+				inputFrameLab,
+				mask,
+				mean,
+				iCov,
+				60,
+				//umDist.val,
+				umLuz.val,
+				contourPointMinCount,
+				error,
+				c,
+				kalmanFilter->Z,
+				kalmanFilter->frame
 		);
 //		dayan::printMat(kalmanFilter->Z, "Z");
 		// Test static Z
@@ -153,23 +160,23 @@ int main(int argc, char** argv)
 		//dayan::drawCircle(inputFrame, c);
 		dayan::drawCircleByZ(inputFrame, kalmanFilter->Z, cv::Scalar(255, 0, 0));
 
-		if (frameCount < 3)
+		if (kalmanFilter->frame < 3)
 		{
-			imwrite("./data/" + data_path + "/frame_" + std::to_string(frameCount) + ".png", inputFrame);
+			imwrite("./data/" + data_path + "/frame_" + std::to_string(kalmanFilter->frame) + ".png", inputFrame);
 		}
 
-		if (2 == frameCount)
+		if (2 == kalmanFilter->frame)
 		{
 			kalmanFilter->init_X();
 		}
-		else if (2 < frameCount)
+		else if (2 < kalmanFilter->frame)
 		{
 
-			kalmanFilter->predict_correct(dt);
+			kalmanFilter->predict_correct();
 			//			dayan::printMat(kalmanFilter->X, "corrected");
 			//			dayan::printMat(kalmanFilter->Xp, "predicted");
 			// predicted color red
-			//dayan::drawCircleByX(inputFrame, kalmanFilter->Xp, cv::Scalar(0, 0, 255));
+			dayan::drawCircleByX(inputFrame, kalmanFilter->Xp, cv::Scalar(0, 0, 255));
 			// corrected color green
 			dayan::drawCircleByX(inputFrame, kalmanFilter->X, cv::Scalar(0, 255, 0));
 		}
@@ -183,7 +190,6 @@ int main(int argc, char** argv)
 		if (0 < sleep)
 			std::this_thread::sleep_for(std::chrono::seconds(1));
 
-		dt = 0;
 		// If the user presses a key, the cycle ends.
 		//		break;
 	} while (cv::waitKeyEx(30) < 0);

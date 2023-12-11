@@ -28,8 +28,8 @@
 
 ## Kalman Filter Types
 
-* **Extended Kalman Filter:** `0` (default)
-* **Implicit Extended Kalman Filter:** `1`
+* **Extended_6x5 Kalman Filter:** `0` (default)
+* **Implicit Extended_6x5 Kalman Filter:** `1`
 
 ## Installation
 
@@ -106,13 +106,13 @@ You can see: [Makefile](Makefile)
 
 ## Examples:
 
-Tennis ball with Implicit Extended Kalman Filter:
+Tennis ball with Implicit Extended_6x5 Kalman Filter:
 
 ```sh
 ./cmake-build-debug/KalmanFilterBallTracking ball_tennis 1;
 ```
 
-Orange ball with Extended Kalman Filter:
+Orange ball with Extended_6x5 Kalman Filter:
 
 ```sh
 ./cmake-build-debug/KalmanFilterBallTracking ball_orange 0;
@@ -122,13 +122,13 @@ Orange ball with Extended Kalman Filter:
 
 ### Derivatives Analysis
 
-* [Position](doc/analysis/analysis_x_velocity_acceleration.ipynb) [<img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" width="80"/>](https://colab.research.google.com/github/dayan3847/bayes_estimator/blob/master/doc/analysis/analysis_x_velocity_acceleration.ipynb)
-* [Radium](doc/analysis/analysis_r_velocity_acceleration.ipynb) [<img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" width="80"/>](https://colab.research.google.com/github/dayan3847/bayes_estimator/blob/master/doc/analysis/analysis_r_velocity_acceleration.ipynb)
+* [Position](doc/analysis/analysis_x_velocity_acceleration.ipynb) [<img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" width="80"/>](https://colab.research.google.com/github/dayan3847/KalmanFilterBallTracking/blob/master/doc/analysis/analysis_x_velocity_acceleration.ipynb)
+* [Radium](doc/analysis/analysis_r_velocity_acceleration.ipynb) [<img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" width="80"/>](https://colab.research.google.com/github/dayan3847/KalmanFilterBallTracking/blob/master/doc/analysis/analysis_r_velocity_acceleration.ipynb)
 
 ### Matrices
 
-* [Extended Kalman Filter](doc/analysis/ball_tracking_kalman_filter_extended.ipynb) [<img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" width="80"/>](https://colab.research.google.com/github/dayan3847/bayes_estimator/blob/master/doc/analysis/ball_tracking_kalman_filter_extended.ipynb)
-* [Implicit Extended Kalman Filter](doc/analysis/ball_tracking_kalman_filter_extended_implicit.ipynb) [<img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" width="80"/>](https://colab.research.google.com/github/dayan3847/bayes_estimator/blob/master/doc/analysis/ball_tracking_kalman_filter_extended_implicit.ipynb)
+* [Extended_6x5 Kalman Filter](doc/analysis/ball_tracking_kalman_filter_extended.ipynb) [<img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" width="80"/>](https://colab.research.google.com/github/dayan3847/KalmanFilterBallTracking/blob/master/doc/analysis/ball_tracking_kalman_filter_extended.ipynb)
+* [Implicit Extended_6x5 Kalman Filter](doc/analysis/ball_tracking_kalman_filter_extended_implicit.ipynb) [<img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" width="80"/>](https://colab.research.google.com/github/dayan3847/KalmanFilterBallTracking/blob/master/doc/analysis/ball_tracking_kalman_filter_extended_implicit.ipynb)
 
 ## Colaborators
 
