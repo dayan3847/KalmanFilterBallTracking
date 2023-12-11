@@ -44,6 +44,8 @@ namespace dayan
 		// catidad de parametros de la medida
 		int m;
 
+		int frame = -1;
+
 		KalmanFilter(int n, int m)
 		{
 			this->n = n;
@@ -51,9 +53,9 @@ namespace dayan
 			Z = cv::Mat::zeros(m, 1, CV_32F);
 		}
 
-		void predict(const int& dt)
+		void predict()
 		{
-			this->update_A(dt);
+			this->update_A();
 			Xp = A * X;
 			Pp = A * P * A.t() + Q;
 			if (Pp.at<float>(0) < 0)
@@ -69,9 +71,9 @@ namespace dayan
 		{
 		}
 
-		virtual void predict_correct(const int& dt)
+		virtual void predict_correct()
 		{
-			this->predict(dt);
+			this->predict();
 			this->correct();
 		}
 
@@ -80,7 +82,7 @@ namespace dayan
 		}
 
 	protected:
-		virtual void update_A(const int& dt)
+		virtual void update_A()
 		{
 		}
 
